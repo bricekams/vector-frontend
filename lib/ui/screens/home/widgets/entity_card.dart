@@ -8,9 +8,10 @@ class EntityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return SizedBox(
-      width: 400,
-      height: 200,
+      width: MediaQuery.of(context).size.width * 0.20833,
+      height: MediaQuery.of(context).size.height * 0.20709,
       child: Container(
         decoration: BoxDecoration(
           color: Colors.blue[50],
@@ -23,8 +24,8 @@ class EntityCard extends StatelessWidget {
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
                 color: Theme.of(context).colorScheme.primary,
               ),
-              width: 150,
-              height: 200,
+              width: MediaQuery.of(context).size.width * 0.09,
+              height: MediaQuery.of(context).size.height,
             ),
             Expanded(
               child: Padding(

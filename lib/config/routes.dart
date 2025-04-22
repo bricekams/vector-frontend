@@ -1,4 +1,4 @@
-import 'package:frontend/ui/screens/home.dart';
+import 'package:frontend/ui/screens/home/home.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/ui/screens/chat.dart';
 import 'package:frontend/ui/screens/entities.dart';

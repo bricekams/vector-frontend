@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/config/routes.dart';
+import 'package:frontend/providers/home.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const VectorUI());
+  final app = MultiProvider(
+    providers: [ChangeNotifierProvider(create: (_) => HomeProvider())],
+    child: VectorUI(),
+  );
+
+  runApp(app);
 }
 
 class VectorUI extends StatelessWidget {
@@ -19,7 +26,10 @@ class VectorUI extends StatelessWidget {
       theme: ThemeData.from(
         useMaterial3: true,
         textTheme: GoogleFonts.tekturTextTheme(),
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green, brightness: Brightness.dark),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.green,
+          brightness: Brightness.dark,
+        ),
       ),
     );
   }
