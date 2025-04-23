@@ -6,16 +6,21 @@ class HomeInputField extends StatelessWidget {
   final int? maxLines;
   final bool expands;
   final int? maxLength;
+  final FormFieldValidator<String>? validator;
+  final TextEditingController? controller;
 
-  const HomeInputField({super.key, this.height, this.label, this.maxLines, this.expands = false, this.maxLength});
+  const HomeInputField({super.key, this.height, this.label, this.maxLines, this.expands = false, this.maxLength, this.validator, this.controller});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: height,
-      child: TextField(
+      child: TextFormField(
         expands: expands,
+        validator: validator,
+        controller: controller,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         maxLength: maxLength,
         maxLines: expands ? null : (maxLines ?? 1),
         textAlignVertical: expands ? TextAlignVertical.top : TextAlignVertical.center,
@@ -24,6 +29,21 @@ class HomeInputField extends StatelessWidget {
         ),
         cursorColor: Theme.of(context).colorScheme.onPrimary,
         decoration: InputDecoration(
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.red.shade800,
+            ),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.red.shade800,
+            ),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          errorStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Colors.red.shade800,
+          ),
           label: label != null ? Text(
             label!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(

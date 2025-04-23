@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/models/entity.dart';
 
 class EntityCard extends StatelessWidget {
@@ -14,15 +15,29 @@ class EntityCard extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.20709,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.blue[50],
+          color: Theme.of(context).colorScheme.surfaceBright,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
           children: [
             Container(
               decoration: BoxDecoration(
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                    blurRadius: 0.5,
+                    spreadRadius: 1,
+                    offset: Offset(0, 0),
+                  ),
+                ],
                 borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10)),
                 color: Theme.of(context).colorScheme.primary,
+                image: entity.image != null
+                    ? DecorationImage(
+                  image: NetworkImage("${dotenv.env['BASE_API_URL']}/media/${entity.image}/entities"),
+                  fit: BoxFit.cover,
+                )
+                    : null,
               ),
               width: MediaQuery.of(context).size.width * 0.09,
               height: MediaQuery.of(context).size.height,
@@ -39,7 +54,7 @@ class EntityCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Text(
@@ -47,7 +62,7 @@ class EntityCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ],

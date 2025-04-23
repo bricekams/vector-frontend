@@ -13,10 +13,6 @@ import 'package:provider/provider.dart';
 import '../../../providers/home.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-List<Entity> entities = [];
-
-enum HomeSideState { create, edit, view }
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -25,9 +21,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool showBox = false;
   String? selectedEntityType;
-  HomeSideState? selectedSideState = HomeSideState.create;
+  final TextEditingController searchController = TextEditingController();
+  final HomeDropDownController entityTypeController = HomeDropDownController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<HomeProvider>().init();
+      entityTypeController.addListener(() {
+        context.read<HomeProvider>().setSelectedEntityType(
+          entityTypeController.value,
+        );
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +59,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Padding(
                       padding: EdgeInsets.only(
-                        right: MediaQuery.of(context).size.width * 0.01,
+                        right:
+                            context.watch<HomeProvider>().showSideBox == true
+                                ? MediaQuery.of(context).size.width * 0.01
+                                : 0,
                         bottom: MediaQuery.of(context).size.height * 0.01,
                       ),
                       child: Row(
@@ -72,36 +84,55 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               HomeDropDown(
+                                controller: entityTypeController,
                                 items:
                                     EntityType.values
-                                        .map((e) => context.t(e.name))
+                                        .map((e) => e.name)
                                         .toList(),
-                                borderColor: Theme.of(context).colorScheme.onPrimary,
+                                borderColor:
+                                    Theme.of(context).colorScheme.onPrimary,
                                 nullPlaceholder: context.t('allCategories'),
                               ),
                               const SizedBox(width: 20),
-                              HomeSearchBar(),
-                              if (selectedSideState != HomeSideState.create)
-                                const SizedBox(width: 20),
-                              if (selectedSideState != HomeSideState.create)
-                                CreateEntityButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      selectedSideState = HomeSideState.create;
-                                    });
-                                  },
-                                ),
+                              HomeSearchBar(
+                                onChanged: (txt) {
+                                  context.read<HomeProvider>().setSearch(txt);
+                                },
+                              ),
+                              if (!context.watch<HomeProvider>().showSideBox)
+                                if (context.watch<HomeProvider>().entities !=
+                                        null &&
+                                    context
+                                        .watch<HomeProvider>()
+                                        .entities!
+                                        .isNotEmpty) ...[
+                                  const SizedBox(width: 20),
+                                  CreateEntityButton(
+                                    onPressed: () {
+                                      context
+                                          .read<HomeProvider>()
+                                          .setSelectedSideState(
+                                            HomeSideState.create,
+                                          );
+                                      context
+                                          .read<HomeProvider>()
+                                          .setShowSideBox(true);
+                                    },
+                                  ),
+                                ],
                             ],
                           ),
                         ],
                       ),
                     ),
+                    const SizedBox(height: 20),
                     _buildHomeBody(),
                   ],
                 ),
               ),
             ),
-            _buildSideContainer(),
+            if (context.watch<HomeProvider>().showSideBox)
+              _buildSideContainer(),
           ],
         ),
       ),
@@ -109,9 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _onCloseSideContainer() {
-    setState(() {
-      selectedSideState = null;
-    });
+    context.read<HomeProvider>().setShowSideBox(false);
   }
 
   _buildHomeBody() {
@@ -127,16 +156,75 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       case HomeProviderState.loaded:
         return Expanded(
-          child: SingleChildScrollView(
-            child: Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children:
-                  entities.map((item) {
-                    return EntityCard(entity: item);
-                  }).toList(),
-            ),
-          ),
+          child:
+              context.watch<HomeProvider>().entities!.isNotEmpty
+                  ? SingleChildScrollView(
+                    child: Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children:
+                          context.watch<HomeProvider>().entities!.map((item) {
+                            return EntityCard(entity: item);
+                          }).toList(),
+                    ),
+                  )
+                  : Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.account_box_outlined,
+                          size: 100,
+                          color: Theme.of(context).colorScheme.outlineVariant,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          context.t('noEntities'),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        if (context.watch<HomeProvider>().selectedSideState !=
+                            HomeSideState.create)
+                          InkWell(
+                            onTap: () {
+                              context.read<HomeProvider>().setSelectedSideState(
+                                HomeSideState.create,
+                              );
+                              context.read<HomeProvider>().setShowSideBox(true);
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.15,
+                              padding: EdgeInsets.symmetric(vertical: 7),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                color:
+                                    Theme.of(
+                                      context,
+                                    ).colorScheme.onSecondaryFixedVariant,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  context.t('createEntity'),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.bodyLarge?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
         );
       case HomeProviderState.error:
         return Expanded(
@@ -145,7 +233,11 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline_outlined, size: 100, color: Theme.of(context).colorScheme.outlineVariant),
+                Icon(
+                  Icons.error_outline_outlined,
+                  size: 100,
+                  color: Theme.of(context).colorScheme.outlineVariant,
+                ),
                 const SizedBox(height: 20),
                 Text(
                   context.t('wentWrong'),
@@ -156,15 +248,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 20),
                 InkWell(
-                  onTap: () {
-                   
-                  },
+                  onTap: () {},
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     padding: EdgeInsets.symmetric(vertical: 7),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
-                      color: Theme.of(context).colorScheme.onSecondaryFixedVariant,
+                      color:
+                          Theme.of(context).colorScheme.onSecondaryFixedVariant,
                     ),
                     child: Center(
                       child: Text(
@@ -176,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -185,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _buildSideContainer() {
-    switch (selectedSideState) {
+    switch (context.watch<HomeProvider>().selectedSideState) {
       case HomeSideState.create:
         return HomeSideContainer(
           onClose: _onCloseSideContainer,
@@ -202,8 +293,6 @@ class _HomeScreenState extends State<HomeScreen> {
           onClose: _onCloseSideContainer,
           title: context.t('view'),
         );
-      default:
-        return Container();
     }
   }
 }

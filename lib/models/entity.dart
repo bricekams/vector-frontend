@@ -3,7 +3,6 @@ class Entity {
   final String name;
   final String description;
   final EntityType type;
-  final String country;
   final String? image;
 
   const Entity({
@@ -11,16 +10,31 @@ class Entity {
     required this.name,
     required this.description,
     required this.type,
-    required this.country,
     this.image,
   });
+
+  factory Entity.fromJson(Map<String, dynamic> json) => Entity(
+    id: json['id'],
+    name: json['name'],
+    description: json['description'],
+    type: EntityType.values.firstWhere((e) => e.name == json['type']),
+    image: json['image'],
+  );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'description': description,
+    'type': type.name,
+    'image': image,
+  };
 }
 
 enum EntityType {
   personOfInterest,
+  publicFigure,
   organization,
-  location,
-  groupOfPeople,
-  publicPerson,
+  place,
   politicalParty,
+  groupOfPeople
 }

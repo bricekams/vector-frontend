@@ -23,17 +23,17 @@ Map<String, Map<String, String>> translations = {
     "fr": "Organisation",
     "en": "Organization",
   },
-  "@location": {
+  "@place": {
     "fr": "Lieu",
-    "en": "Location",
+    "en": "Place",
   },
   "@groupOfPeople": {
     "fr": "Groupe de personnes",
     "en": "Group of people",
   },
-  "@publicPerson": {
-    "fr": "Personne publique",
-    "en": "Public person",
+  "@publicFigure": {
+    "fr": "Personnalité publique",
+    "en": "Public figure",
   },
   "@politicalParty": {
     "fr": "Parti politique",
@@ -62,5 +62,29 @@ Map<String, Map<String, String>> translations = {
   "@retry": {
     "fr": "Réessayer",
     "en": "Retry",
+  },
+  "@noEntities": {
+    "fr": "Aucune entité trouvée",
+    "en": "No entity found",
+  },
+  "@createEntity": {
+    "fr": "Créer une entité",
+    "en": "Create entity",
+  },
+  "@nameRequired": {
+    "fr": "Le nom est requis",
+    "en": "Name is required",
+  },
+  "@descriptionRequired": {
+    "fr": "La description est requise",
+    "en": "Description is required",
+  },
+  "@imageRequired": {
+    "fr": "L'image est requise",
+    "en": "Image is required",
+  },
+  "@categoryRequired": {
+    "fr": "La catégorie est requise",
+    "en": "Category is required",
   },
 };

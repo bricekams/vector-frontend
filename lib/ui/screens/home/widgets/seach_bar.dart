@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:frontend/utils/extensions/build_context.dart';
 
 class HomeSearchBar extends StatelessWidget {
-  const HomeSearchBar({super.key});
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+
+  const HomeSearchBar({super.key, this.controller, this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 300,
       child: TextField(
+        controller: controller,
+        onChanged: onChanged,
         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           color: Theme.of(context).colorScheme.primary,
         ),
