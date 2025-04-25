@@ -87,4 +87,44 @@ Map<String, Map<String, String>> translations = {
     "fr": "La catégorie est requise",
     "en": "Category is required",
   },
+  "@edit": {
+    "fr": "Modifier",
+    "en": "Edit",
+  },
+  "@summary": {
+    "fr": "Résumé",
+    "en": "Summary",
+  },
+  "@cancel": {
+    "fr": "Annuler",
+    "en": "Cancel",
+  },
+  '@augment': {
+    'fr': 'Augmenter',
+    'en': 'Augment',
+  },
+  "@history": {
+    "fr": "Historique",
+    "en": "History",
+  },
+  "@uploading": {
+    "fr": "Téléchargement",
+    "en": "Uploading",
+  },
+  "@augmenting": {
+    "fr": "En cours d'augmentation",
+    "en": "Augmenting",
+  },
+  "@processing": {
+    "fr": "Traitement",
+    "en": "Processing",
+  },
+  "@success": {
+    "fr": "Succès",
+    "en": "Success",
+  },
+  "@failed": {
+    "fr": "Échec",
+    "en": "Failed",
+  },
 };

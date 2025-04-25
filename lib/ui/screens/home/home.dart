@@ -1,17 +1,24 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/models/entity.dart';
 import 'package:frontend/ui/screens/home/widgets/app_bar.dart';
 import 'package:frontend/ui/screens/home/widgets/create_button.dart';
 import 'package:frontend/ui/screens/home/widgets/create_entity_widget.dart';
 import 'package:frontend/ui/screens/home/widgets/dropdown.dart';
+import 'package:frontend/ui/screens/home/widgets/edit_entity_card.dart';
+import 'package:frontend/ui/screens/home/widgets/end_drawer.dart';
 import 'package:frontend/ui/screens/home/widgets/seach_bar.dart';
 import 'package:frontend/ui/screens/home/widgets/side_container.dart';
 import 'package:frontend/ui/screens/home/widgets/entity_card.dart';
+import 'package:frontend/ui/screens/home/widgets/summary_entity_widget.dart';
 import 'package:frontend/utils/extensions/build_context.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/home.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+
+final GlobalKey<ScaffoldState> homeScaffoldKey = GlobalKey<ScaffoldState>();
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -41,7 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: homeScaffoldKey,
       appBar: HomeAppBar(),
+      endDrawer: CustomEndDrawer(),
+      endDrawerEnableOpenDragGesture: false,
       body: Padding(
         padding: EdgeInsets.only(
           left: MediaQuery.of(context).size.width * 0.02604,
@@ -99,27 +109,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context.read<HomeProvider>().setSearch(txt);
                                 },
                               ),
-                              if (!context.watch<HomeProvider>().showSideBox)
-                                if (context.watch<HomeProvider>().entities !=
-                                        null &&
+                              if (context.watch<HomeProvider>().entities !=
+                                      null &&
+                                  ((context
+                                                  .watch<HomeProvider>()
+                                                  .selectedSideState !=
+                                              HomeSideState.create &&
+                                          context
+                                              .watch<HomeProvider>()
+                                              .showSideBox) ||
+                                      !context
+                                          .watch<HomeProvider>()
+                                          .showSideBox)) ...[
+                                const SizedBox(width: 20),
+                                CreateEntityButton(
+                                  onPressed: () {
                                     context
-                                        .watch<HomeProvider>()
-                                        .entities!
-                                        .isNotEmpty) ...[
-                                  const SizedBox(width: 20),
-                                  CreateEntityButton(
-                                    onPressed: () {
-                                      context
-                                          .read<HomeProvider>()
-                                          .setSelectedSideState(
-                                            HomeSideState.create,
-                                          );
-                                      context
-                                          .read<HomeProvider>()
-                                          .setShowSideBox(true);
-                                    },
-                                  ),
-                                ],
+                                        .read<HomeProvider>()
+                                        .setSelectedSideState(
+                                          HomeSideState.create,
+                                        );
+                                    context.read<HomeProvider>().setShowSideBox(
+                                      true,
+                                    );
+                                  },
+                                ),
+                              ],
                             ],
                           ),
                         ],
@@ -248,7 +263,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 20),
                 InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    context.read<HomeProvider>().init();
+                  },
                   child: Container(
                     width: MediaQuery.of(context).size.width * 0.15,
                     padding: EdgeInsets.symmetric(vertical: 7),
@@ -287,11 +304,15 @@ class _HomeScreenState extends State<HomeScreen> {
         return HomeSideContainer(
           onClose: _onCloseSideContainer,
           title: context.t('edit'),
+          body: EditEntityWidget(),
         );
       case HomeSideState.view:
         return HomeSideContainer(
           onClose: _onCloseSideContainer,
-          title: context.t('view'),
+          title: context.t(
+            context.watch<HomeProvider>().selectedEntity!.type.name,
+          ),
+          body: SummaryEntityWidget(),
         );
     }
   }

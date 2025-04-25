@@ -6,6 +6,10 @@ class HomeDropDownController extends ChangeNotifier {
 
   String? get value => _value;
 
+  HomeDropDownController({String? value}) {
+    _value = value;
+  }
+
   set value(String? newValue) {
     _value = newValue;
     notifyListeners();

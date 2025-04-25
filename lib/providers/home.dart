@@ -8,6 +8,8 @@ enum HomeSideState { create, edit, view, }
 
 class HomeProvider with ChangeNotifier {
 
+  Entity? selectedEntity;
+
   List<Entity>? _entities;
   String search = "";
   String? selectedEntityType;
@@ -30,6 +32,8 @@ class HomeProvider with ChangeNotifier {
   HomeProviderState state = HomeProviderState.loading;
 
   Future<void> init() async {
+    state = HomeProviderState.loading;
+    notifyListeners();
     try {
       setEntities(await EntityApi.getAll());
       state = HomeProviderState.loaded;
@@ -66,6 +70,17 @@ class HomeProvider with ChangeNotifier {
 
   void setShowSideBox(bool showSideBox) {
     this.showSideBox = showSideBox;
+    notifyListeners();
+  }
+
+  void setSelectedEntity(Entity? selectedEntity) {
+    this.selectedEntity = selectedEntity;
+    notifyListeners();
+  }
+
+  void updateEntity(Entity entity) {
+    _entities!.removeWhere((e) => e.id == entity.id);
+    _entities!.add(entity);
     notifyListeners();
   }
 }

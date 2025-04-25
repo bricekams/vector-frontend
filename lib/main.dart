@@ -1,15 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/config/routes.dart';
+import 'package:frontend/providers/augment.dart';
 import 'package:frontend/providers/home.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+
+import 'models/augmentation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
+
+  await Hive.initFlutter();
+  Augmentation.registerAdapters();
+
   final app = MultiProvider(
-    providers: [ChangeNotifierProvider(create: (_) => HomeProvider())],
+    providers: [
+      ChangeNotifierProvider(create: (_) => HomeProvider()),
+      ChangeNotifierProvider(create: (_) => AugmentProvider()),
+    ],
     child: VectorUI(),
   );
 
@@ -24,13 +35,12 @@ class VectorUI extends StatelessWidget {
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: router,
-      themeMode: ThemeMode.dark,
       title: 'Vector 1.0',
       theme: ThemeData.from(
         useMaterial3: true,
         textTheme: GoogleFonts.tekturTextTheme(),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.green,
+          seedColor: Colors.teal,
           brightness: Brightness.dark,
         ),
       ),

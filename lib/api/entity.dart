@@ -7,7 +7,6 @@ class EntityApi {
   static Future<Entity> create(FormData data) async {
     try {
       Response response = await dio.post("/entities", data: data);
-      print("response $response");
       Entity entity = Entity.fromJson(response.data);
       return entity;
     } catch (e) {
@@ -57,7 +56,7 @@ class EntityApi {
     }
   }
 
-  static Future<Entity> update(String id, Map<String, dynamic> data) async {
+  static Future<Entity> update(String id, FormData data) async {
     try {
       Response response = await dio.put("/entities/$id", data: data);
       Entity entity = Entity.fromJson(response.data);
