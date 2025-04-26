@@ -119,6 +119,10 @@ Map<String, Map<String, String>> translations = {
     "fr": "Traitement",
     "en": "Processing",
   },
+  "@processings": {
+    "fr": "Traitements",
+    "en": "Processing",
+  },
   "@success": {
     "fr": "Succès",
     "en": "Success",
@@ -126,5 +130,33 @@ Map<String, Map<String, String>> translations = {
   "@failed": {
     "fr": "Échec",
     "en": "Failed",
+  },
+  "@entityDeleted": {
+    "fr": "L'entité a été supprimée",
+    "en": "Entity deleted",
+  },
+  "@uploads": {
+    "fr": "Téléchargements",
+    "en": "Uploads",
+  },
+  "@confirmAugment": {
+    "fr": "Etes-vous sûr de vouloir augmenter ce fichier?",
+    "en": "Are you sure you want to augment this file?",
+  },
+  "@confirmDeleteEntity": {
+    "fr": "Etes-vous sûr de vouloir supprimer cette entité?",
+    "en": "Are you sure you want to delete this entity?",
+  },
+  "@delete": {
+    "fr": "Supprimer",
+    "en": "Delete",
+  },
+  "@askVector": {
+    "fr": "Demander à Vector",
+    "en": "Ask Vector",
+  },
+  "@discuss": {
+    "fr": "Discuter",
+    "en": "Discuss",
   },
 };

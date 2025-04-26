@@ -32,6 +32,9 @@ class Augmentation {
   @HiveField(5)
   final DateTime startTime;
 
+  @HiveField(6)
+  final DateTime updatedAt;
+
   const Augmentation({
     required this.id,
     required this.filename,
@@ -39,6 +42,7 @@ class Augmentation {
     required this.entityId,
     required this.state,
     required this.startTime,
+    required this.updatedAt,
   });
 
   factory Augmentation.fromJson(Map<String, dynamic> json) => Augmentation(
@@ -48,6 +52,7 @@ class Augmentation {
     progress: json['progress'],
     state: AugmentationState.values.firstWhere((e) => e.name == json['state']),
     startTime: DateTime.parse(json['startTime']),
+    updatedAt: DateTime.parse(json['updatedAt']),
   );
 
   Map<String, dynamic> toJson() => {
@@ -57,6 +62,7 @@ class Augmentation {
     'progress': progress,
     'state': state.name,
     'startTime': startTime.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
   };
 
   Augmentation copyWith({
@@ -65,6 +71,7 @@ class Augmentation {
     String? entityId,
     double? progress,
     AugmentationState? state,
+    DateTime? updatedAt,
   }) {
     return Augmentation(
       id: id ?? this.id,
@@ -72,7 +79,8 @@ class Augmentation {
       entityId: entityId ?? this.entityId,
       progress: progress ?? this.progress,
       state: state ?? this.state,
-      startTime: startTime
+      startTime: startTime,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 

@@ -53,8 +53,13 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void removeEntity(Entity entity) {
+    _entities!.removeWhere((e) => e.id == entity.id);
+    notifyListeners();
+  }
+
   void setSearch(String search) {
-    this.search = search;
+    this.search = search.replaceAll(RegExp(r'\s+'), ' ').trimLeft().trimRight();
     notifyListeners();
   }
 
@@ -81,6 +86,13 @@ class HomeProvider with ChangeNotifier {
   void updateEntity(Entity entity) {
     _entities!.removeWhere((e) => e.id == entity.id);
     _entities!.add(entity);
+    notifyListeners();
+  }
+
+  void incrementUploadsCount(Entity entity) {
+    final updatedEntity = entity.copyWith(uploadsCount: entity.uploadsCount + 1);
+    _entities!.removeWhere((e) => e.id == entity.id);
+    _entities!.add(updatedEntity);
     notifyListeners();
   }
 }

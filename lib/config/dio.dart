@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Dio dio = Dio()
   ..options.baseUrl = dotenv.env['BASE_API_URL']!
+  ..options.headers['bypass-tunnel-reminder'] = 'true'
   ..interceptors.add(interceptorsWrapper);
 
 InterceptorsWrapper interceptorsWrapper = InterceptorsWrapper(

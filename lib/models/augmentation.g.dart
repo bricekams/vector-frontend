@@ -23,13 +23,14 @@ class AugmentationAdapter extends TypeAdapter<Augmentation> {
       entityId: fields[2] as String,
       state: fields[4] as AugmentationState,
       startTime: fields[5] as DateTime,
+      updatedAt: fields[6] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, Augmentation obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class AugmentationAdapter extends TypeAdapter<Augmentation> {
       ..writeByte(4)
       ..write(obj.state)
       ..writeByte(5)
-      ..write(obj.startTime);
+      ..write(obj.startTime)
+      ..writeByte(6)
+      ..write(obj.updatedAt);
   }
 
   @override

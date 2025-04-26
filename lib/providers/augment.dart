@@ -13,12 +13,13 @@ class AugmentProvider with ChangeNotifier {
   Future<void> init() async {
     box = await Hive.openBox<Augmentation>(boxName);
     _augmentations =
-        box.values.toList()..sort((a, b) => a.startTime.compareTo(b.startTime));
+        box.values.toList()..sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
     notifyListeners();
   }
 
   Future<Augmentation> addAugmentation(String filename, String entityId) async {
     final augmentationId = UniqueKey().toString();
+    final now = DateTime.now();
 
     try {
       final augmentation = Augmentation(
@@ -27,12 +28,13 @@ class AugmentProvider with ChangeNotifier {
         progress: 0.0,
         entityId: entityId,
         state: AugmentationState.uploading,
-        startTime: DateTime.now(),
+        startTime: now,
+        updatedAt: now,
       );
       await box.put(augmentation.id, augmentation);
       _augmentations =
           box.values.toList()
-            ..sort((a, b) => a.startTime.compareTo(b.startTime));
+            ..sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
       notifyListeners();
       return augmentation;
     } catch (e) {
@@ -46,22 +48,21 @@ class AugmentProvider with ChangeNotifier {
   Future<void> updateState(String id, AugmentationState state) async {
     final augmentation = box.get(id);
     if (augmentation != null) {
-      final updated = augmentation.copyWith(state: state);
+      final updated = augmentation.copyWith(state: state, updatedAt: DateTime.now());
       await box.put(id, updated);
-      _augmentations = box.values.toList() ..sort((a, b) => a.startTime.compareTo(b.startTime));
+      _augmentations = box.values.toList() ..sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
       notifyListeners();
     }
   }
 
   Future<void> updateProgress(String id, double progress) async {
-    print(progress);
     final augmentation = box.get(id);
     if (augmentation != null) {
       final updated = augmentation.copyWith(progress: progress);
       await box.put(id, updated);
       var list =
           box.values.toList()
-            ..sort((a, b) => a.startTime.compareTo(b.startTime));
+            ..sort((a, b) => a.updatedAt.compareTo(b.updatedAt));
       _augmentations = list;
       notifyListeners();
     }

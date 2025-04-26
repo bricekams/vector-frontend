@@ -15,6 +15,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:web/web.dart' as web;
 
+import 'confirm_augment_dialog.dart';
+
 class EntityCard extends StatelessWidget {
   final Entity entity;
 
@@ -61,6 +63,9 @@ class EntityCard extends StatelessWidget {
                           ? DecorationImage(
                             image: NetworkImage(
                               getImageUrl(entity.image!, "entities"),
+                              headers: {
+                                'bypass-tunnel-reminder' : 'true'
+                              }
                             ),
                             fit: BoxFit.cover,
                           )
@@ -102,6 +107,11 @@ class EntityCard extends StatelessWidget {
                               allowedExtensions: ['pdf'],
                             );
                             if (result != null) {
+                              if (!context.mounted) return;
+                              bool confirm = await showDialog(context: context, builder: (context){
+                                return ConfirmAugmentDialog(filename: result.files.single.name);
+                              });
+                              if (!confirm) return;
                               PlatformFile file = result.files.single;
                               if (!context.mounted) return;
                              Augmentation augmentation = await context
@@ -117,6 +127,7 @@ class EntityCard extends StatelessWidget {
                                 if (!context.mounted) return;
                                 context.read<AugmentProvider>().updateState(
                                     augmentation.id, AugmentationState.done);
+                                context.read<HomeProvider>().incrementUploadsCount(entity);
                               }).onError((err,trace){
                                 if (!context.mounted) return;
                                 context.read<AugmentProvider>().updateState(augmentation.id, AugmentationState.failed);

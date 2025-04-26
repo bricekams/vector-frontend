@@ -158,12 +158,9 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
                   }
 
                   final formData = FormData.fromMap(data);
-
-                  print(data);
-
                   entity = await EntityApi.update(selectedEntity.id, formData);
+
                 } catch (e) {
-                  print(e);
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -295,7 +292,10 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
                                     ? NetworkImage(image!.path)
                                     : FileImage(File(image!.path)))
                                 as ImageProvider
-                            : NetworkImage(initialImageUrl!),
+                            : NetworkImage(
+                              initialImageUrl!,
+                              headers: {'bypass-tunnel-reminder': 'true'},
+                            ),
                     fit: BoxFit.cover,
                   )
                   : null,

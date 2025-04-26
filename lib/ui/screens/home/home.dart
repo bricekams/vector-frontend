@@ -1,11 +1,10 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/models/entity.dart';
 import 'package:frontend/ui/screens/home/widgets/app_bar.dart';
 import 'package:frontend/ui/screens/home/widgets/create_button.dart';
 import 'package:frontend/ui/screens/home/widgets/create_entity_widget.dart';
 import 'package:frontend/ui/screens/home/widgets/dropdown.dart';
-import 'package:frontend/ui/screens/home/widgets/edit_entity_card.dart';
+import 'package:frontend/ui/screens/home/widgets/edit_entity_widget.dart';
 import 'package:frontend/ui/screens/home/widgets/end_drawer.dart';
 import 'package:frontend/ui/screens/home/widgets/seach_bar.dart';
 import 'package:frontend/ui/screens/home/widgets/side_container.dart';

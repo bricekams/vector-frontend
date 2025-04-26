@@ -31,18 +31,19 @@ class _AugmentationTileState extends State<AugmentationTile> {
           image: DecorationImage(
             image: NetworkImage(
               getImageUrl(entity.image!, "entities"),
+              headers: {'bypass-tunnel-reminder': 'true'},
             ),
             fit: BoxFit.cover,
           ),
         ),
       ),
-      title: Text(widget.augmentation.filename),
+      title: Text(widget.augmentation.filename, maxLines: 1, overflow: TextOverflow.ellipsis),
       subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(child: _buildSubtitle(widget.augmentation.state)),
           const SizedBox(width: 10),
-          Text('${widget.augmentation.startTime.hour.toString().padLeft(2, '0')}:${widget.augmentation.startTime.minute.toString().padLeft(2, '0')}'),
+          Text('${widget.augmentation.updatedAt.hour.toString().padLeft(2, '0')}:${widget.augmentation.updatedAt.minute.toString().padLeft(2, '0')}'),
         ],
       ),
     );

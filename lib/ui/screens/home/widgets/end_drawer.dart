@@ -31,7 +31,7 @@ class CustomEndDrawer extends StatelessWidget {
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    context.t('processing'),
+                    context.t('processings'),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onSurface,

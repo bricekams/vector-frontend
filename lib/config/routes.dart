@@ -2,7 +2,6 @@ import 'package:frontend/ui/screens/home/home.dart';
 import 'package:frontend/ui/screens/loader.dart';
 import 'package:go_router/go_router.dart';
 import 'package:frontend/ui/screens/chat.dart';
-import 'package:frontend/ui/screens/entities.dart';
 
 class AppRoutes {
   static const String home = '/';
@@ -20,6 +19,11 @@ GoRouter router = GoRouter(
     GoRoute(
       path: AppRoutes.loader,
       builder: (context, state) => const LoaderScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.chat,
+      name: AppRoutes.chat,
+      builder: (context, state) => const ChatScreen(),
     ),
   ],
 );
