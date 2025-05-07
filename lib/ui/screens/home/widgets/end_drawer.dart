@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 import 'augmentation_tile.dart';
 
 class CustomEndDrawer extends StatelessWidget {
-  const CustomEndDrawer({super.key});
+  final GlobalKey<ScaffoldState> homeScaffoldKey;
+  const CustomEndDrawer({super.key, required this.homeScaffoldKey});
 
   @override
   Widget build(BuildContext context) {

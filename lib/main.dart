@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:frontend/config/routes.dart';
 import 'package:frontend/providers/augment.dart';
+import 'package:frontend/providers/chat.dart';
+import 'package:frontend/providers/chat_entities.dart';
 import 'package:frontend/providers/home.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -20,6 +22,8 @@ Future<void> main() async {
     providers: [
       ChangeNotifierProvider(create: (_) => HomeProvider()),
       ChangeNotifierProvider(create: (_) => AugmentProvider()),
+      ChangeNotifierProvider(create: (_) => ChatEntitiesProvider()),
+      ChangeNotifierProvider(create: (_) => ChatProvider()),
     ],
     child: VectorUI(),
   );

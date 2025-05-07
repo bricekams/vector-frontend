@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:frontend/config/routes.dart';
+import 'package:frontend/config/ws.dart';
 import 'package:frontend/providers/augment.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 
 class LoaderScreen extends StatefulWidget {
   const LoaderScreen({super.key});
@@ -18,8 +20,15 @@ class _LoaderScreenState extends State<LoaderScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      double width = MediaQuery.of(context).size.width;
+      if (width<1200) {
+        context.go(AppRoutes.smallScreenError);
+      }
       context.read<AugmentProvider>().init().then((value) {
-        if (mounted) context.go(AppRoutes.home);
+        WSService.init();
+        WSService.socket?.onConnect((event) {
+         if (mounted) context.push(AppRoutes.home);
+        });
       });
     });
   }

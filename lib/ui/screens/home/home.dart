@@ -10,13 +10,13 @@ import 'package:frontend/ui/screens/home/widgets/seach_bar.dart';
 import 'package:frontend/ui/screens/home/widgets/side_container.dart';
 import 'package:frontend/ui/screens/home/widgets/entity_card.dart';
 import 'package:frontend/ui/screens/home/widgets/summary_entity_widget.dart';
+import 'package:frontend/ui/widgets/error_widget.dart';
 import 'package:frontend/utils/extensions/build_context.dart';
 import 'package:provider/provider.dart';
 
 import '../../../providers/home.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-final GlobalKey<ScaffoldState> homeScaffoldKey = GlobalKey<ScaffoldState>();
 
 
 class HomeScreen extends StatefulWidget {
@@ -30,6 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String? selectedEntityType;
   final TextEditingController searchController = TextEditingController();
   final HomeDropDownController entityTypeController = HomeDropDownController();
+
+  final GlobalKey<ScaffoldState> homeScaffoldKey = GlobalKey<ScaffoldState>();
+
 
   @override
   void initState() {
@@ -49,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: homeScaffoldKey,
       appBar: HomeAppBar(),
-      endDrawer: CustomEndDrawer(),
+      endDrawer: CustomEndDrawer(homeScaffoldKey: homeScaffoldKey),
       endDrawerEnableOpenDragGesture: false,
       body: Padding(
         padding: EdgeInsets.only(
@@ -242,50 +245,10 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       case HomeProviderState.error:
         return Expanded(
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline_outlined,
-                  size: 100,
-                  color: Theme.of(context).colorScheme.outlineVariant,
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  context.t('wentWrong'),
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.outlineVariant,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                InkWell(
-                  onTap: () {
-                    context.read<HomeProvider>().init();
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.15,
-                    padding: EdgeInsets.symmetric(vertical: 7),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(4),
-                      color:
-                          Theme.of(context).colorScheme.onSecondaryFixedVariant,
-                    ),
-                    child: Center(
-                      child: Text(
-                        context.t('retry'),
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          child: CustomErrorWidget(
+            onRetry: () {
+              context.read<HomeProvider>().init();
+            },
           ),
         );
     }

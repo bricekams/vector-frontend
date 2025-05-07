@@ -159,4 +159,24 @@ Map<String, Map<String, String>> translations = {
     "fr": "Discuter",
     "en": "Discuss",
   },
+  "@typeYourMessage": {
+    "fr": "Tapez votre message",
+    "en": "Type your message",
+  },
+  "@filter": {
+    "fr": "Filtrer",
+    "en": "Filter",
+  },
+  "@thinking": {
+    "fr": "Pense",
+    "en": "Thinking",
+  },
+  "@failedEntityDeletion": {
+    "fr": "Echec de la suppression de l'entité",
+    "en": "Failed to delete entity"
+  },
+  "@loadOnBiggerScreen": {
+    "fr": "Veuillez ouvrir l'application sur un écran plus grand",
+    "en": "Please open the application on a bigger screen"
+  },
 };

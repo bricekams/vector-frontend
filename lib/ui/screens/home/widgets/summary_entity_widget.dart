@@ -5,6 +5,7 @@ import 'package:frontend/api/entity.dart';
 import 'package:frontend/config/routes.dart';
 import 'package:frontend/models/entity.dart';
 import 'package:frontend/providers/home.dart';
+import 'package:frontend/ui/screens/loader.dart';
 import 'package:frontend/utils/extensions/build_context.dart';
 import 'package:frontend/utils/helpers.dart';
 import 'package:go_router/go_router.dart';
@@ -26,6 +27,7 @@ class _SummaryEntityWidgetState extends State<SummaryEntityWidget> {
   @override
   Widget build(BuildContext context) {
     final selectedEntity = context.watch<HomeProvider>().selectedEntity;
+
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.77,
       child: Padding(
@@ -140,7 +142,7 @@ class _SummaryEntityWidgetState extends State<SummaryEntityWidget> {
                 Expanded(
                   child: InkWell(
                     onTap: () {
-                      context.push(AppRoutes.chat);
+                      context.push(AppRoutes.chat, extra: selectedEntity);
                     },
                     child: Container(
                       width: double.infinity,
@@ -177,20 +179,17 @@ class _SummaryEntityWidgetState extends State<SummaryEntityWidget> {
                     );
                     if (!confirm) return;
                     setState(() => deleting = true);
-                    await EntityApi.delete(selectedEntity.id);
-                    if (!context.mounted) return;
-                    setState(() => deleting = false);
-                    context.read<HomeProvider>().setShowSideBox(false);
-                    context.read<HomeProvider>().removeEntity(selectedEntity);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.green,
-                        content: Text(
-                          context.t('entityDeleted'),
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    );
+                    EntityApi.delete(selectedEntity.id).then((value) {
+                      if (!context.mounted) return;
+                      setState(() => deleting = false);
+                      context.read<HomeProvider>().setShowSideBox(false);
+                      context.read<HomeProvider>().removeEntity(selectedEntity);
+                      notify(context, NotificationType.success, context.t('entityDeleted'));
+                    }).onError((err,trace){
+                      if (!context.mounted) return;
+                      setState(() => deleting = false);
+                      notify(context, NotificationType.error, context.t('failedEntityDeletion'));
+                    });
                   },
                   child: Container(
                     width: 50,
