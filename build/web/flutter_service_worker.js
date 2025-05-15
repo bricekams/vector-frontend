@@ -32,7 +32,7 @@ const RESOURCES = {"assets/assets/chat-bg.png": "7e83d6532b3cdd05473e42782c8c310
 "canvaskit/chromium/canvaskit.wasm": "64a386c87532ae52ae041d18a32a3635",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "version.json": "2b521e10dfa0f067561de489a19d6620",
-"flutter_bootstrap.js": "b924a29cbd4de92bc3d8a26c023ba2f1",
+"flutter_bootstrap.js": "ddf61bf7361e4fe28026773e2431d0b6",
 "manifest.json": "906fc433ff2f17c2c8af10ca573ca807",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-maskable-512.png": "301a7604d45b3e739efc881eb04896ea",
