@@ -77,7 +77,76 @@ class _SummaryEntityWidgetState extends State<SummaryEntityWidget> {
                           children: [
                             TextSpan(
                               text:
-                                  ' (${context.watch<HomeProvider>().selectedEntity?.uploadsCount})',
+                                  ' [${context.watch<HomeProvider>().selectedEntity?.uploadsCount}]',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      RichText(
+                        text: TextSpan(
+                          text: context.t('phoneNumber'),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          children: [
+                            TextSpan(
+                              text:
+                              ' [+${context.watch<HomeProvider>().selectedEntity?.phone}]',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      RichText(
+                        text: TextSpan(
+                          text: 'Pseudos',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          children: [
+                            TextSpan(
+                              text:
+                              ' [${context.watch<HomeProvider>().selectedEntity?.pseudos?.where((e) => e.isNotEmpty).toList().join(', ')}]',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      RichText(
+                        text: TextSpan(
+                          text: context.t('birthDate'),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          children: [
+                            TextSpan(
+                              text:
+                              ' [${context.watch<HomeProvider>().selectedEntity?.birthDate?.toIso8601String().substring(0, 10)}]',
                               style: Theme.of(
                                 context,
                               ).textTheme.bodyMedium?.copyWith(

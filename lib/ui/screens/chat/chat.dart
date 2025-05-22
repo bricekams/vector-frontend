@@ -174,8 +174,8 @@ class _ChatScreenState extends State<ChatScreen> {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/chat-bg.png'),
-                  fit: BoxFit.contain,
-                  opacity: 0.05,
+                  fit: BoxFit.cover,
+                  opacity: 0.01,
                 ),
               ),
               padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),

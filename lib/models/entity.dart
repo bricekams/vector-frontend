@@ -5,6 +5,9 @@ class Entity {
   final EntityType type;
   final String? image;
   final int uploadsCount;
+  final List<String>? pseudos;
+  final int? phone;
+  final DateTime? birthDate;
 
   const Entity({
     required this.id,
@@ -12,6 +15,9 @@ class Entity {
     required this.description,
     required this.type,
     required this.uploadsCount,
+    this.pseudos,
+    this.phone,
+    this.birthDate,
     this.image,
   });
 
@@ -22,6 +28,9 @@ class Entity {
     type: EntityType.values.firstWhere((e) => e.name == json['type']),
     image: json['image'],
     uploadsCount: json['uploadsCount'],
+    pseudos: (json['pseudos'] as List).cast<String>(),
+    phone: json['phone'] != null ? int.parse(json['phone']) : null,
+    birthDate: json['birthDate'] != null ? DateTime.parse(json['birthDate']) : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -31,6 +40,9 @@ class Entity {
     'type': type.name,
     'image': image,
     'uploadsCount': uploadsCount,
+    'pseudos': pseudos,
+    'phone': phone,
+    'birthDate': birthDate?.toIso8601String(),
   };
 
   Entity copyWith({
@@ -40,6 +52,9 @@ class Entity {
     EntityType? type,
     String? image,
     int? uploadsCount,
+    List<String>? pseudos,
+    int? phone,
+    DateTime? birthDate,
   }) {
     return Entity(
       id: id ?? this.id,
@@ -48,6 +63,9 @@ class Entity {
       type: type ?? this.type,
       image: image ?? this.image,
       uploadsCount: uploadsCount ?? this.uploadsCount,
+      pseudos: pseudos ?? this.pseudos,
+      phone: phone ?? this.phone,
+      birthDate: birthDate ?? this.birthDate,
     );
   }
 

@@ -24,3 +24,8 @@ void notify(BuildContext context, NotificationType type, String text) {
     ),
   );
 }
+
+String toDate (DateTime date) {
+  date = date.toLocal();
+  return '${date.day}/${date.month}/${date.year}';
+}

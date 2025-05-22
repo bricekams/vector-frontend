@@ -1,13 +1,15 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/api/entity.dart';
 import 'package:frontend/ui/screens/home/widgets/dropdown.dart';
 import 'package:frontend/ui/screens/home/widgets/input.dart';
+import 'package:frontend/ui/screens/home/widgets/phone_input_field.dart';
 import 'package:frontend/utils/extensions/build_context.dart';
+import 'package:frontend/utils/helpers.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../models/entity.dart';
@@ -23,7 +25,12 @@ class CreateEntityWidget extends StatefulWidget {
 class _CreateEntityWidgetState extends State<CreateEntityWidget> {
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController pseudosController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
+  String phoneNumber = '';
+
+  DateTime? birthDate;
+  bool birthFailedValidation = false;
 
   bool noImageError = false;
 
@@ -86,19 +93,110 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
                 ),
               ],
             ),
+            const SizedBox(height: 10),
+            HomeInputField(
+              controller: pseudosController,
+              label: context.t('pseudos'),
+            ),
+            const SizedBox(height: 10),
             HomeDropDown(
               controller: categoryController,
               isExpanded: true,
               showAllOption: false,
               defaultValue: EntityType.values.first.name,
               items: EntityType.values.map((e) => e.name).toList(),
-              borderColor: Theme.of(context).colorScheme.secondaryContainer,
+              borderColor: Theme.of(context).colorScheme.onPrimary,
               nullPlaceholder: context.t('allCategories'),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(child: PhoneInputField(onChanged: (phone) {
+                  setState(() {
+                    phoneNumber = phone.completeNumber.substring(1);
+                  });
+                })),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: InkWell(
+                    onTap: () async {
+                    DateTime? birthDate = await  showDatePicker(context: context, firstDate: DateTime(1900), lastDate: DateTime.now());
+                    if (birthDate == null) return;
+                    setState(() {
+                      this.birthDate = birthDate;
+                    });
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      width: double.infinity,
+                      height: 47,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: Theme.of(context).colorScheme.primary,
+                        border: Border.all(
+                          color:
+                              birthFailedValidation
+                                  ? Colors.red.shade800
+                                  : Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_month,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            birthDate == null
+                                ? context.t('birthDate')
+                                : toDate(birthDate!),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color: birthFailedValidation ? Colors.red.shade800 : Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                          Spacer(),
+                         if (birthDate!=null) IconButton(
+                            onPressed: () {
+                              setState(() {
+                                birthDate = null;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.clear,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              size: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             InkWell(
               onTap: () async {
+
                 if (!formKey.currentState!.validate()) {
+                  return;
+                }
+
+                if (!RegExp(r'^\d+$').hasMatch(phoneNumber)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.red.shade600,
+                      content: Text(
+                        context.t('invalidPhone'),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  );
                   return;
                 }
 
@@ -112,8 +210,8 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
                 setState(() {
                   creating = true;
                 });
+
                 Entity entity;
-                print("image image image ${image!.path}");
 
                 try {
                   final formData = FormData.fromMap({
@@ -124,18 +222,18 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
                       filename: image!.name,
                     ),
                     "type": categoryController.value,
+                    "pseudos": pseudosController.text.split(","),
+                    "phone": int.tryParse(phoneNumber),
+                    "birthDate": birthDate?.toIso8601String(),
                   });
-
-                  print("data $formData");
 
                   entity = await EntityApi.create(formData);
                 } catch (e) {
-                  print(e);
+
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         backgroundColor: Colors.red.shade600,
-
                         content: Text(
                           context.t('wentWrong'),
                           style: TextStyle(color: Colors.white),

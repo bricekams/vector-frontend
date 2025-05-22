@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend/api/entity.dart';
 import 'package:frontend/ui/screens/home/widgets/dropdown.dart';
 import 'package:frontend/ui/screens/home/widgets/input.dart';
+import 'package:frontend/ui/screens/home/widgets/phone_input_field.dart';
 import 'package:frontend/utils/extensions/build_context.dart';
+import 'package:frontend/utils/extensions/string.dart';
 import 'package:frontend/utils/helpers.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +28,12 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   late HomeDropDownController categoryController;
+  late TextEditingController pseudosController;
+  String? completePhoneNumber;
+  String? number;
+  DateTime? birthDate;
+
+  bool birthFailedValidation = false;
 
   bool noImageError = false;
   String? initialImageUrl;
@@ -40,6 +48,7 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
     nameController = TextEditingController();
     descriptionController = TextEditingController();
     categoryController = HomeDropDownController(value: null);
+    pseudosController = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final entity = context.read<HomeProvider>().selectedEntity!;
@@ -48,7 +57,9 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
       nameController.text = entity.name;
       descriptionController.text = entity.description;
       categoryController.value = entity.type.name;
-
+      completePhoneNumber = entity.phone?.toString() ?? '';
+      pseudosController.text = entity.pseudos?.join(',') ?? '';
+      birthDate = entity.birthDate;
       setState(() {});
     });
   }
@@ -58,11 +69,14 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
     nameController.dispose();
     descriptionController.dispose();
     categoryController.dispose();
+    pseudosController.dispose();
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Form(
       key: formKey,
       child: Container(
@@ -114,19 +128,123 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
                 ),
               ],
             ),
+            const SizedBox(height: 10),
+            HomeInputField(
+              controller: pseudosController,
+              label: context.t('pseudos'),
+            ),
+            const SizedBox(height: 10),
             HomeDropDown(
               controller: categoryController,
               isExpanded: true,
               showAllOption: false,
               defaultValue: EntityType.values.first.name,
               items: EntityType.values.map((e) => e.name).toList(),
-              borderColor: Theme.of(context).colorScheme.secondaryContainer,
+              borderColor: Theme.of(context).colorScheme.onPrimary,
               nullPlaceholder: context.t('allCategories'),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: PhoneInputField(
+                    defaultValue: completePhoneNumber,
+                    onChanged: (phone) {
+                        completePhoneNumber = phone.completeNumber.substring(1);
+                        number = phone.number;
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: InkWell(
+                    onTap: () async {
+                      DateTime? birthDate = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+                      if (birthDate == null) return;
+                      setState(() {
+                        this.birthDate = birthDate;
+                      });
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(bottom: 20),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      width: double.infinity,
+                      height: 47,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: Theme.of(context).colorScheme.primary,
+                        border: Border.all(
+                          color:
+                              birthFailedValidation
+                                  ? Colors.red.shade800
+                                  : Theme.of(context).colorScheme.onPrimary,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.calendar_month,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            birthDate == null
+                                ? context.t('birthDate')
+                                : toDate(birthDate!),
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color:
+                                  birthFailedValidation
+                                      ? Colors.red.shade800
+                                      : Theme.of(context).colorScheme.onPrimary,
+                            ),
+                          ),
+                          Spacer(),
+                          if (birthDate != null)
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  birthDate = null;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.clear,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                size: 18,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             InkWell(
               onTap: () async {
                 if (!formKey.currentState!.validate()) return;
+
+                if (completePhoneNumber != null &&
+                    completePhoneNumber!.isNotEmpty &&
+                    !RegExp(r'^\d+$').hasMatch(completePhoneNumber!)) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.red.shade600,
+                      content: Text(
+                        context.t('invalidPhone'),
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  );
+                  return;
+                }
 
                 setState(() => creating = true);
 
@@ -150,6 +268,7 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
                     data['type'] = categoryController.value;
                   }
 
+
                   if (image != null) {
                     data['file'] = MultipartFile.fromBytes(
                       await image!.readAsBytes(),
@@ -157,10 +276,27 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
                     );
                   }
 
-                  final formData = FormData.fromMap(data);
-                  entity = await EntityApi.update(selectedEntity.id, formData);
+                  if (pseudosController.text !=
+                      selectedEntity.pseudos?.join(',')) {
+                    List<String> pseudos = pseudosController.text.split(",").map((e) => e.trimOut()).where((e) => e.isNotEmpty).toList();
+                    data['pseudos'] = pseudos.length == 1 ? [pseudos[0]," "] : pseudos;
+                  }
 
+                  if (number!=null && int.tryParse(number!) != null) {
+                    data['phone'] = int.tryParse(completePhoneNumber!).toString();
+                  }
+
+                  if (birthDate != null &&
+                      birthDate != selectedEntity.birthDate) {
+                    data['birthDate'] = birthDate?.toIso8601String();
+                  }
+
+                  print("DATA: $data");
+                  final formData = FormData.fromMap(data);
+
+                  entity = await EntityApi.update(selectedEntity.id, formData);
                 } catch (e) {
+                  print(e);
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -364,14 +500,5 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
         noImageError = false;
       });
     }
-  }
-
-  _clearFields() {
-    setState(() {
-      nameController.clear();
-      descriptionController.clear();
-      categoryController.clear();
-      image = null;
-    });
   }
 }

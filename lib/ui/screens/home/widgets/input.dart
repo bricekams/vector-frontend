@@ -67,7 +67,7 @@ class HomeInputField extends StatelessWidget {
           focusedBorder: OutlineInputBorder(
             borderSide: BorderSide(
               color: Theme.of(context).colorScheme.onPrimary,
-              width: 3,
+              width: 2,
             ),
           ),
           border: OutlineInputBorder(

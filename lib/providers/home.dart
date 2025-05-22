@@ -20,7 +20,8 @@ class HomeProvider with ChangeNotifier {
   List<Entity>? get entities =>
       _entities?.reversed.toList().where((e) {
         final inSearch = (e.name.toLowerCase().contains(search.toLowerCase()) ||
-                e.description.toLowerCase().contains(search.toLowerCase()));
+                e.description.toLowerCase().contains(search.toLowerCase()) ||
+                e.pseudos!.where((e) => e.isNotEmpty).toList().join(', ').toLowerCase().contains(search.toLowerCase()) || e.phone.toString().contains(search));
 
         if (selectedEntityType == null) {
           return inSearch;
@@ -36,6 +37,7 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
     try {
       setEntities(await EntityApi.getAll());
+
       state = HomeProviderState.loaded;
       notifyListeners();
     } catch (e) {

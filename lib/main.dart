@@ -43,6 +43,7 @@ class VectorUI extends StatelessWidget {
       theme: ThemeData.from(
         useMaterial3: true,
         textTheme: GoogleFonts.tekturTextTheme(),
+
         colorScheme: ColorScheme.fromSeed(
           seedColor: Colors.teal,
           brightness: Brightness.dark,
