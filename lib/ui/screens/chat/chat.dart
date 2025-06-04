@@ -53,7 +53,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           image: DecorationImage(
                             image: NetworkImage(
                               getImageUrl(widget.entity.image!, "entities"),
-                              headers: {'bypass-tunnel-reminder': 'true'},
+                              headers: {'ngrok-skip-browser-warning': 'true'},
                             ),
                             fit: BoxFit.cover,
                           ),

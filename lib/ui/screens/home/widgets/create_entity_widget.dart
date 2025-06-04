@@ -7,6 +7,7 @@ import 'package:frontend/ui/screens/home/widgets/dropdown.dart';
 import 'package:frontend/ui/screens/home/widgets/input.dart';
 import 'package:frontend/ui/screens/home/widgets/phone_input_field.dart';
 import 'package:frontend/utils/extensions/build_context.dart';
+import 'package:frontend/utils/extensions/string.dart';
 import 'package:frontend/utils/helpers.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/phone_number.dart';
@@ -28,6 +29,7 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
   final TextEditingController pseudosController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   String phoneNumber = '';
+  String? number;
 
   DateTime? birthDate;
   bool birthFailedValidation = false;
@@ -112,20 +114,28 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(child: PhoneInputField(onChanged: (phone) {
-                  setState(() {
-                    phoneNumber = phone.completeNumber.substring(1);
-                  });
-                })),
+                Expanded(
+                  child: PhoneInputField(
+                    defaultValue: phoneNumber,
+                    onChanged: (phone) {
+                      phoneNumber = phone.completeNumber.substring(1);
+                      number = phone.number;
+                    },
+                  ),
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: InkWell(
                     onTap: () async {
-                    DateTime? birthDate = await  showDatePicker(context: context, firstDate: DateTime(1900), lastDate: DateTime.now());
-                    if (birthDate == null) return;
-                    setState(() {
-                      this.birthDate = birthDate;
-                    });
+                      DateTime? birthDate = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime(1900),
+                        lastDate: DateTime.now(),
+                      );
+                      if (birthDate == null) return;
+                      setState(() {
+                        this.birthDate = birthDate;
+                      });
                     },
                     child: Container(
                       margin: EdgeInsets.only(bottom: 20),
@@ -156,22 +166,26 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
                             style: Theme.of(
                               context,
                             ).textTheme.bodyMedium?.copyWith(
-                              color: birthFailedValidation ? Colors.red.shade800 : Theme.of(context).colorScheme.onPrimary,
+                              color:
+                                  birthFailedValidation
+                                      ? Colors.red.shade800
+                                      : Theme.of(context).colorScheme.onPrimary,
                             ),
                           ),
                           Spacer(),
-                         if (birthDate!=null) IconButton(
-                            onPressed: () {
-                              setState(() {
-                                birthDate = null;
-                              });
-                            },
-                            icon: Icon(
-                              Icons.clear,
-                              color: Theme.of(context).colorScheme.onPrimary,
-                              size: 18,
+                          if (birthDate != null)
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  birthDate = null;
+                                });
+                              },
+                              icon: Icon(
+                                Icons.clear,
+                                color: Theme.of(context).colorScheme.onPrimary,
+                                size: 18,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -182,12 +196,11 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
             const SizedBox(height: 10),
             InkWell(
               onTap: () async {
-
                 if (!formKey.currentState!.validate()) {
                   return;
                 }
 
-                if (!RegExp(r'^\d+$').hasMatch(phoneNumber)) {
+                if (number != null && int.tryParse(number!) == null) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       backgroundColor: Colors.red.shade600,
@@ -213,23 +226,46 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
 
                 Entity entity;
 
+                final Map<String, dynamic> data = {};
+
+                data['name'] = nameController.text;
+
+                data['description'] = descriptionController.text;
+
+                data['type'] = categoryController.value;
+
+                data['file'] = MultipartFile.fromBytes(
+                  await image!.readAsBytes(),
+                  filename: image!.name,
+                );
+
+                List<String>? pseudos =
+                    pseudosController.text
+                        .split(",")
+                        .map((e) => e.trimOut())
+                        .where((e) => e.isNotEmpty)
+                        .toList();
+
+                pseudos = pseudos.isEmpty ? null : pseudos;
+
+                if (pseudos != null) {
+                  data['pseudos'] =
+                      pseudos.length == 1 ? [pseudos[0], " "] : pseudos;
+                }
+
+                if (number != null && int.tryParse(number!) != null) {
+                  data['phone'] = int.tryParse(phoneNumber).toString();
+                }
+
+                if (birthDate != null) {
+                  data['birthDate'] = birthDate?.toIso8601String();
+                }
+
                 try {
-                  final formData = FormData.fromMap({
-                    "name": nameController.text,
-                    "description": descriptionController.text,
-                    "file": MultipartFile.fromBytes(
-                      await image!.readAsBytes(),
-                      filename: image!.name,
-                    ),
-                    "type": categoryController.value,
-                    "pseudos": pseudosController.text.split(","),
-                    "phone": int.tryParse(phoneNumber),
-                    "birthDate": birthDate?.toIso8601String(),
-                  });
+                  final formData = FormData.fromMap(data);
 
                   entity = await EntityApi.create(formData);
                 } catch (e) {
-
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

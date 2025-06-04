@@ -64,7 +64,7 @@ class EntityCard extends StatelessWidget {
                             image: NetworkImage(
                               getImageUrl(entity.image!, "entities"),
                               headers: {
-                                'bypass-tunnel-reminder' : 'true'
+                                'ngrok-skip-browser-warning' : 'true'
                               }
                             ),
                             fit: BoxFit.cover,

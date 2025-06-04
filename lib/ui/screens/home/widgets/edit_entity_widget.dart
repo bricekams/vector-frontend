@@ -430,7 +430,7 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
                                 as ImageProvider
                             : NetworkImage(
                               initialImageUrl!,
-                              headers: {'bypass-tunnel-reminder': 'true'},
+                              headers: {'ngrok-skip-browser-warning': 'true'},
                             ),
                     fit: BoxFit.cover,
                   )

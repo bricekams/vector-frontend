@@ -31,7 +31,7 @@ class _AugmentationTileState extends State<AugmentationTile> {
           image: DecorationImage(
             image: NetworkImage(
               getImageUrl(entity.image!, "entities"),
-              headers: {'bypass-tunnel-reminder': 'true'},
+              headers: {'ngrok-skip-browser-warning': 'true'},
             ),
             fit: BoxFit.cover,
           ),

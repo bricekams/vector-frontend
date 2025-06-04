@@ -54,7 +54,7 @@ class _SummaryEntityWidgetState extends State<SummaryEntityWidget> {
                     image: DecorationImage(
                       image: NetworkImage(
                         getImageUrl(selectedEntity!.image!, "entities"),
-                        headers: {'bypass-tunnel-reminder': 'true'},
+                        headers: {'ngrok-skip-browser-warning': 'true'},
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -100,7 +100,7 @@ class _SummaryEntityWidgetState extends State<SummaryEntityWidget> {
                           children: [
                             TextSpan(
                               text:
-                              ' [+${context.watch<HomeProvider>().selectedEntity?.phone}]',
+                              ' [+${context.watch<HomeProvider>().selectedEntity?.phone??""}]',
                               style: Theme.of(
                                 context,
                               ).textTheme.bodyMedium?.copyWith(
@@ -146,7 +146,7 @@ class _SummaryEntityWidgetState extends State<SummaryEntityWidget> {
                           children: [
                             TextSpan(
                               text:
-                              ' [${context.watch<HomeProvider>().selectedEntity?.birthDate?.toIso8601String().substring(0, 10)}]',
+                              ' [${context.watch<HomeProvider>().selectedEntity?.birthDate?.toIso8601String().substring(0, 10) ?? ""}]',
                               style: Theme.of(
                                 context,
                               ).textTheme.bodyMedium?.copyWith(
