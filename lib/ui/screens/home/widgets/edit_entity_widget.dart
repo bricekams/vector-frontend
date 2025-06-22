@@ -57,7 +57,7 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
       nameController.text = entity.name;
       descriptionController.text = entity.description;
       categoryController.value = entity.type.name;
-      completePhoneNumber = entity.phone?.toString() ?? '';
+      completePhoneNumber = entity.phone_1?.toString() ?? '';
       pseudosController.text = entity.pseudos?.join(',') ?? '';
       birthDate = entity.birthDate;
       setState(() {});

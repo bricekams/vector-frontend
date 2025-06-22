@@ -1,11 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:frontend/api/augment.dart';
 import 'package:frontend/api/entity.dart';
 import 'package:frontend/config/routes.dart';
-import 'package:frontend/models/entity.dart';
 import 'package:frontend/providers/home.dart';
-import 'package:frontend/ui/screens/loader.dart';
 import 'package:frontend/utils/extensions/build_context.dart';
 import 'package:frontend/utils/helpers.dart';
 import 'package:go_router/go_router.dart';
@@ -100,7 +96,7 @@ class _SummaryEntityWidgetState extends State<SummaryEntityWidget> {
                           children: [
                             TextSpan(
                               text:
-                              ' [+${context.watch<HomeProvider>().selectedEntity?.phone??""}]',
+                              ' [+${context.watch<HomeProvider>().selectedEntity?.phone_1??""}]',
                               style: Theme.of(
                                 context,
                               ).textTheme.bodyMedium?.copyWith(

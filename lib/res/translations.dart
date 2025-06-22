@@ -69,4 +69,8 @@ Map<String, Map<String, String>> translations = {
   "@pseudos": {"fr": "Pseudonymes (Séparés par des virgules)", "en": "Pseudonyms (Separated by a comma)"},
   "@birthDate": {"fr": "Date de naissance", "en": "Birth Date"},
   "@invalidPhone": {"fr": "Numéro de téléphone invalide", "en": "Invalid phone number"},
+  "@username": {"fr": "Nom d'utilisateur", "en": "Username"},
+  "@location": {"fr": "Localisation", "en": "Location"},
+  "@website": {"fr": "Site web", "en": "Website"},
+  "@link": {"fr": "Lien", "en": "Link"},
 };

@@ -6,7 +6,18 @@ class Entity {
   final String? image;
   final int uploadsCount;
   final List<String>? pseudos;
-  final int? phone;
+  final int? phone_1;
+  final int? phone_2;
+  final String? lastKnownLocation;
+  final String? email_1;
+  final String? email_2;
+  final String? website;
+  final String? facebook_1;
+  final String? facebook_2;
+  final String? instagram;
+  final String? twitter;
+  final String? linkedin;
+  final String? youtube;
   final DateTime? birthDate;
 
   const Entity({
@@ -16,7 +27,18 @@ class Entity {
     required this.type,
     required this.uploadsCount,
     this.pseudos,
-    this.phone,
+    this.phone_1,
+    this.phone_2,
+    this.lastKnownLocation,
+    this.email_1,
+    this.email_2,
+    this.website,
+    this.facebook_1,
+    this.facebook_2,
+    this.instagram,
+    this.twitter,
+    this.linkedin,
+    this.youtube,
     this.birthDate,
     this.image,
   });
@@ -29,8 +51,20 @@ class Entity {
     image: json['image'],
     uploadsCount: json['uploadsCount'],
     pseudos: (json['pseudos'] as List).cast<String>(),
-    phone: json['phone'] != null ? int.parse(json['phone']) : null,
-    birthDate: json['birthDate'] != null ? DateTime.parse(json['birthDate']) : null,
+    phone_1: json['phone_1'] != null ? int.parse(json['phone_1']) : null,
+    birthDate:
+        json['birthDate'] != null ? DateTime.parse(json['birthDate']) : null,
+    phone_2: json['phone_2'] != null ? int.parse(json['phone_2']) : null,
+    lastKnownLocation: json['lastKnownLocation'],
+    email_1: json['email_1'],
+    email_2: json['email_2'],
+    website: json['website'],
+    facebook_1: json['facebook_1'],
+    facebook_2: json['facebook_2'],
+    instagram: json['instagram'],
+    twitter: json['twitter'],
+    linkedin: json['linkedin'],
+    youtube: json['youtube'],
   );
 
   Map<String, dynamic> toJson() => {
@@ -41,8 +75,19 @@ class Entity {
     'image': image,
     'uploadsCount': uploadsCount,
     'pseudos': pseudos,
-    'phone': phone,
+    'phone_1': phone_1,
     'birthDate': birthDate?.toIso8601String(),
+    'phone_2': phone_2,
+    'lastKnownLocation': lastKnownLocation,
+    'email_1': email_1,
+    'email_2': email_2,
+    'website': website,
+    'facebook_1': facebook_1,
+    'facebook_2': facebook_2,
+    'instagram': instagram,
+    'twitter': twitter,
+    'linkedin': linkedin,
+    'youtube': youtube,
   };
 
   Entity copyWith({
@@ -53,8 +98,19 @@ class Entity {
     String? image,
     int? uploadsCount,
     List<String>? pseudos,
-    int? phone,
+    int? phone_1,
     DateTime? birthDate,
+    int? phone_2,
+    String? lastKnownLocation,
+    String? email_1,
+    String? email_2,
+    String? website,
+    String? facebook_1,
+    String? facebook_2,
+    String? instagram,
+    String? twitter,
+    String? linkedin,
+    String? youtube,
   }) {
     return Entity(
       id: id ?? this.id,
@@ -64,11 +120,21 @@ class Entity {
       image: image ?? this.image,
       uploadsCount: uploadsCount ?? this.uploadsCount,
       pseudos: pseudos ?? this.pseudos,
-      phone: phone ?? this.phone,
+      phone_1: phone_1 ?? this.phone_1,
       birthDate: birthDate ?? this.birthDate,
+      phone_2: phone_2 ?? this.phone_2,
+      lastKnownLocation: lastKnownLocation ?? this.lastKnownLocation,
+      email_1: email_1 ?? this.email_1,
+      email_2: email_2 ?? this.email_2,
+      website: website ?? this.website,
+      facebook_1: facebook_1 ?? this.facebook_1,
+      facebook_2: facebook_2 ?? this.facebook_2,
+      instagram: instagram ?? this.instagram,
+      twitter: twitter ?? this.twitter,
+      linkedin: linkedin ?? this.linkedin,
+      youtube: youtube ?? this.youtube,
     );
   }
-
 }
 
 enum EntityType {
@@ -77,5 +143,5 @@ enum EntityType {
   organization,
   place,
   politicalParty,
-  groupOfPeople
+  groupOfPeople,
 }

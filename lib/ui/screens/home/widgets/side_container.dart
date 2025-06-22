@@ -18,34 +18,39 @@ class HomeSideContainer extends StatelessWidget {
           MediaQuery.of(context).size.width * 0.007,
         ),
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: onClose,
+                    icon: Icon(
+                      Icons.close,
+                      size: 40,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  ),
+                ],
               ),
-              IconButton(
-                onPressed: onClose,
-                icon: Icon(
-                  Icons.close,
-                  size: 40,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ),
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: body ?? Container(),
+              )
             ],
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: body ?? Container(),
-          )
-        ],
+        ),
       ),
     );
   }

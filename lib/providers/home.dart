@@ -21,7 +21,7 @@ class HomeProvider with ChangeNotifier {
       _entities?.reversed.toList().where((e) {
         final inSearch = (e.name.toLowerCase().contains(search.toLowerCase()) ||
                 e.description.toLowerCase().contains(search.toLowerCase()) ||
-                e.pseudos!.where((e) => e.isNotEmpty).toList().join(', ').toLowerCase().contains(search.toLowerCase()) || e.phone.toString().contains(search));
+                e.pseudos!.where((e) => e.isNotEmpty).toList().join(', ').toLowerCase().contains(search.toLowerCase()) || e.phone_1.toString().contains(search));
 
         if (selectedEntityType == null) {
           return inSearch;
