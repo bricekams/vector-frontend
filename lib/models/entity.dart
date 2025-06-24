@@ -19,6 +19,9 @@ class Entity {
   final String? linkedin;
   final String? youtube;
   final DateTime? birthDate;
+  final Gender? gender;
+  final Religion? religion;
+  final Region? region;
 
   const Entity({
     required this.id,
@@ -41,6 +44,9 @@ class Entity {
     this.youtube,
     this.birthDate,
     this.image,
+    this.gender,
+    this.religion,
+    this.region,
   });
 
   factory Entity.fromJson(Map<String, dynamic> json) => Entity(
@@ -65,6 +71,9 @@ class Entity {
     twitter: json['twitter'],
     linkedin: json['linkedin'],
     youtube: json['youtube'],
+    gender: json['gender'] != null ? Gender.values.firstWhere((e) => e.name == json['gender']) : null,
+    religion: json['religion'] != null ? Religion.values.firstWhere((e) => e.name == json['religion']) : null,
+    region: json['region'] != null ? Region.values.firstWhere((e) => e.name == json['region']) : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -88,6 +97,9 @@ class Entity {
     'twitter': twitter,
     'linkedin': linkedin,
     'youtube': youtube,
+    'gender': gender?.name,
+    'religion': religion?.name,
+    'region': region?.name,
   };
 
   Entity copyWith({
@@ -111,6 +123,9 @@ class Entity {
     String? twitter,
     String? linkedin,
     String? youtube,
+    Gender? gender,
+    Religion? religion,
+    Region? region,
   }) {
     return Entity(
       id: id ?? this.id,
@@ -133,6 +148,9 @@ class Entity {
       twitter: twitter ?? this.twitter,
       linkedin: linkedin ?? this.linkedin,
       youtube: youtube ?? this.youtube,
+      gender: gender ?? this.gender,
+      religion: religion ?? this.religion,
+      region: region ?? this.region,
     );
   }
 }
@@ -144,4 +162,32 @@ enum EntityType {
   place,
   politicalParty,
   groupOfPeople,
+  terrorist,
+}
+
+enum Gender { male, female }
+
+enum Religion {
+  christian,
+  muslim,
+  jewish,
+  hindu,
+  buddhist,
+  sikh,
+  atheist,
+  animist,
+  other,
+}
+
+enum Region {
+  north,
+  south,
+  east,
+  west,
+  northWest,
+  southWest,
+  littoral,
+  farNorth,
+  center,
+  adamawa,
 }

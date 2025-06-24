@@ -4,10 +4,10 @@ import 'package:frontend/api/entity.dart';
 import '../models/entity.dart';
 
 enum HomeProviderState { loading, loaded, error }
-enum HomeSideState { create, edit, view, }
+
+enum HomeSideState { create, edit, view }
 
 class HomeProvider with ChangeNotifier {
-
   Entity? selectedEntity;
 
   List<Entity>? _entities;
@@ -19,9 +19,16 @@ class HomeProvider with ChangeNotifier {
 
   List<Entity>? get entities =>
       _entities?.reversed.toList().where((e) {
-        final inSearch = (e.name.toLowerCase().contains(search.toLowerCase()) ||
+        final inSearch =
+            (e.name.toLowerCase().contains(search.toLowerCase()) ||
                 e.description.toLowerCase().contains(search.toLowerCase()) ||
-                e.pseudos!.where((e) => e.isNotEmpty).toList().join(', ').toLowerCase().contains(search.toLowerCase()) || e.phone_1.toString().contains(search));
+                e.pseudos!
+                    .where((e) => e.isNotEmpty)
+                    .toList()
+                    .join(', ')
+                    .toLowerCase()
+                    .contains(search.toLowerCase()) ||
+                e.phone_1.toString().contains(search));
 
         if (selectedEntityType == null) {
           return inSearch;
@@ -92,7 +99,9 @@ class HomeProvider with ChangeNotifier {
   }
 
   void incrementUploadsCount(Entity entity) {
-    final updatedEntity = entity.copyWith(uploadsCount: entity.uploadsCount + 1);
+    final updatedEntity = entity.copyWith(
+      uploadsCount: entity.uploadsCount + 1,
+    );
     _entities!.removeWhere((e) => e.id == entity.id);
     _entities!.add(updatedEntity);
     notifyListeners();

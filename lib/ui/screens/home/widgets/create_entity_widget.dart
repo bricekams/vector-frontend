@@ -29,8 +29,21 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController pseudosController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  String phoneNumber = '';
-  String? number;
+  final TextEditingController locationController = TextEditingController();
+  final TextEditingController linkedinController = TextEditingController();
+  final TextEditingController twitterController = TextEditingController();
+  final TextEditingController instagramController = TextEditingController();
+  final TextEditingController youtubeController = TextEditingController();
+  final TextEditingController facebook1Controller = TextEditingController();
+  final TextEditingController facebook2Controller = TextEditingController();
+  final TextEditingController websiteController = TextEditingController();
+  final TextEditingController email1Controller = TextEditingController();
+  final TextEditingController email2Controller = TextEditingController();
+
+  String phoneNumber1 = '';
+  String? number1;
+  String phoneNumber2 = '';
+  String? number2;
 
   DateTime? birthDate;
   bool birthFailedValidation = false;
@@ -42,6 +55,9 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
   bool creating = false;
 
   HomeDropDownController categoryController = HomeDropDownController();
+  HomeDropDownController genderController = HomeDropDownController();
+  HomeDropDownController religionController = HomeDropDownController();
+  HomeDropDownController regionController = HomeDropDownController();
 
   @override
   Widget build(BuildContext context) {
@@ -112,25 +128,55 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
               nullPlaceholder: context.t('allCategories'),
             ),
             const SizedBox(height: 10),
+            HomeDropDown(
+              controller: genderController,
+              isExpanded: true,
+              showAllOption: true,
+              defaultValue: null,
+              items: Gender.values.map((e) => e.name).toList(),
+              borderColor: Theme.of(context).colorScheme.onPrimary,
+              nullPlaceholder: context.t('selectGender'),
+            ),
+            const SizedBox(height: 10),
+            HomeDropDown(
+              controller: religionController,
+              isExpanded: true,
+              showAllOption: true,
+              defaultValue: null,
+              items: Religion.values.map((e) => e.name).toList(),
+              borderColor: Theme.of(context).colorScheme.onPrimary,
+              nullPlaceholder: context.t('selectReligion'),
+            ),
+            const SizedBox(height: 10),
+            HomeDropDown(
+              controller: regionController,
+              isExpanded: true,
+              showAllOption: true,
+              defaultValue: null,
+              items: Region.values.map((e) => e.name).toList(),
+              borderColor: Theme.of(context).colorScheme.onPrimary,
+              nullPlaceholder: context.t('selectRegion'),
+            ),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: PhoneInputField(
-                    defaultValue: phoneNumber,
+                    defaultValue: phoneNumber1,
                     onChanged: (phone) {
-                      phoneNumber = phone.completeNumber.substring(1);
-                      number = phone.number;
+                      phoneNumber1 = phone.completeNumber.substring(1);
+                      number1 = phone.number;
                     },
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: PhoneInputField(
-                    defaultValue: phoneNumber,
+                    defaultValue: phoneNumber2,
                     onChanged: (phone) {
-                      phoneNumber = phone.completeNumber.substring(1);
-                      number = phone.number;
+                      phoneNumber2 = phone.completeNumber.substring(1);
+                      number2 = phone.number;
                     },
                   ),
                 ),
@@ -157,9 +203,9 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
                   color: Theme.of(context).colorScheme.primary,
                   border: Border.all(
                     color:
-                    birthFailedValidation
-                        ? Colors.red.shade800
-                        : Theme.of(context).colorScheme.onPrimary,
+                        birthFailedValidation
+                            ? Colors.red.shade800
+                            : Theme.of(context).colorScheme.onPrimary,
                   ),
                 ),
                 child: Row(
@@ -173,13 +219,11 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
                       birthDate == null
                           ? context.t('birthDate')
                           : toDate(birthDate!),
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color:
-                        birthFailedValidation
-                            ? Colors.red.shade800
-                            : Theme.of(context).colorScheme.onPrimary,
+                            birthFailedValidation
+                                ? Colors.red.shade800
+                                : Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
                     Spacer(),
@@ -202,27 +246,25 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
             ),
             const SizedBox(height: 10),
             HomeInputField(
-              controller: nameController,
+              controller: locationController,
               label: context.t('location'),
-              prefixIcon: Icon(Icons.location_on, color: Theme.of(context).colorScheme.onPrimary, size: 20,),
-              validator: (txt) {
-                if (txt?.isEmpty ?? true) {
-                  return context.t('nameRequired');
-                }
-                return null;
-              },
+              prefixIcon: Icon(
+                Icons.location_on,
+                color: Theme.of(context).colorScheme.onPrimary,
+                size: 20,
+              ),
             ),
-           const SizedBox(height: 10),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
                   child: HomeInputField(
-                    controller: nameController,
+                    controller: linkedinController,
                     label: "Linkedin",
-                    hintText: "@${context.t('username')}",
+                    hintText: context.t('username'),
                     validator: (txt) {
-                      if (txt?.isEmpty ?? true) {
-                        return context.t('username');
+                      if (txt?.trimOut().contains(" ") ?? false) {
+                        return context.t('invalidUsername');
                       }
                       return null;
                     },
@@ -231,17 +273,17 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: HomeInputField(
-                    controller: nameController,
+                    controller: twitterController,
                     label: "X (Twitter)",
-                    hintText: "@${context.t('username')}",
+                    hintText: context.t('username'),
                     validator: (txt) {
-                      if (txt?.isEmpty ?? true) {
-                        return context.t('username');
+                      if (txt?.trimOut().contains(" ") ?? false) {
+                        return context.t('invalidUsername');
                       }
                       return null;
                     },
                   ),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 10),
@@ -249,12 +291,12 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
               children: [
                 Expanded(
                   child: HomeInputField(
-                    controller: nameController,
+                    controller: instagramController,
                     label: "Instagram",
-                    hintText: "@${context.t('username')}",
+                    hintText: context.t('username'),
                     validator: (txt) {
-                      if (txt?.isEmpty ?? true) {
-                        return context.t('username');
+                      if (txt?.trimOut().contains(" ") ?? false) {
+                        return context.t('invalidUsername');
                       }
                       return null;
                     },
@@ -263,81 +305,89 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: HomeInputField(
-                    controller: nameController,
+                    controller: youtubeController,
                     label: "YouTube",
-                    hintText: "@${context.t('username')}",
+                    hintText: context.t('username'),
                     validator: (txt) {
-                      if (txt?.isEmpty ?? true) {
-                        return context.t('username');
+                      if (txt?.contains(" ") ?? false) {
+                        return context.t('invalidUsername');
                       }
                       return null;
                     },
                   ),
-                )
+                ),
               ],
             ),
             const SizedBox(height: 10),
             HomeInputField(
-              controller: nameController,
+              controller: facebook1Controller,
               label: "Facebook (1)",
-              hintText: "@${context.t('link')}",
+              hintText: context.t('username'),
               validator: (txt) {
-                if (txt?.isEmpty ?? true) {
-                  return context.t('nameRequired');
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 10),
-              HomeInputField(
-              controller: nameController,
-              label: "Facebook (2)",
-              hintText: "@${context.t('link')}",
-              validator: (txt) {
-                if (txt?.isEmpty ?? true) {
-                  return context.t('nameRequired');
+                if (txt?.contains(" ") ?? false) {
+                  return context.t('invalidUsername');
                 }
                 return null;
               },
             ),
             const SizedBox(height: 10),
             HomeInputField(
-              controller: nameController,
+              controller: facebook2Controller,
+              label: "Facebook (2)",
+              hintText: context.t('username'),
+              validator: (txt) {
+                if (txt?.contains(" ") ?? false) {
+                  return context.t('invalidUsername');
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 10),
+            HomeInputField(
+              controller: websiteController,
               label: context.t('website'),
               hintText: 'http://example.com',
-              prefixIcon: Icon(Icons.language, color: Theme.of(context).colorScheme.onPrimary, size: 20,),
               validator: (txt) {
-                if (txt?.isEmpty ?? true) {
-                  return context.t('nameRequired');
+                if (txt?.contains(" ") ?? false) {
+                  return context.t('invalidLink');
                 }
                 return null;
               },
+              prefixIcon: Icon(
+                Icons.language,
+                color: Theme.of(context).colorScheme.onPrimary,
+                size: 20,
+              ),
             ),
             const SizedBox(height: 10),
-            HomeInputField(
-              controller: nameController,
-              label: "Email (1)",
-              prefixIcon: Icon(Icons.email, color: Theme.of(context).colorScheme.onPrimary, size: 20,),
-              hintText:'email@example.com',
-              validator: (txt) {
-                if (txt?.isEmpty ?? true) {
-                  return context.t('nameRequired');
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 10),
-            HomeInputField(
-              controller: nameController,
-              label: "Email (2)",
-              hintText: 'email@example.com',
-              prefixIcon: Icon(Icons.email, color: Theme.of(context).colorScheme.onPrimary, size: 20,),
-              validator: (txt) {
-                if (txt?.isEmpty ?? true) {
-                  return context.t('nameRequired');
-                }
-                return null;
-              },
+            Row(
+              children: [
+                Expanded(
+                  child: HomeInputField(
+                    controller: email1Controller,
+                    label: "Email (1)",
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      size: 20,
+                    ),
+                    hintText: 'email@example.com',
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: HomeInputField(
+                    controller: email2Controller,
+                    label: "Email (2)",
+                    hintText: 'email@example.com',
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ],
             ),
 
             const SizedBox(height: 10),
@@ -348,15 +398,40 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
     );
   }
 
-
   Widget _submitButton() {
-    return  InkWell(
+    return InkWell(
       onTap: () async {
         if (!formKey.currentState!.validate()) {
           return;
         }
 
-        if (number != null && int.tryParse(number!) == null) {
+        if (genderController.value == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red.shade600,
+              content: Text(
+                context.t('genderRequired'),
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+          return;
+        }
+
+        if (number1 != null && int.tryParse(number1!) == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Colors.red.shade600,
+              content: Text(
+                context.t('invalidPhone'),
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+          return;
+        }
+
+        if (number2 != null && int.tryParse(number2!) == null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               backgroundColor: Colors.red.shade600,
@@ -390,31 +465,84 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
 
         data['type'] = categoryController.value;
 
+        data['gender'] = genderController.value!;
+
+        if (religionController.value != null) {
+          data['religion'] = religionController.value;
+        }
+
+        if (regionController.value != null) {
+          data['region'] = regionController.value;
+        }
+
         data['file'] = MultipartFile.fromBytes(
           await image!.readAsBytes(),
           filename: image!.name,
         );
 
         List<String>? pseudos =
-        pseudosController.text
-            .split(",")
-            .map((e) => e.trimOut())
-            .where((e) => e.isNotEmpty)
-            .toList();
+            pseudosController.text
+                .split(",")
+                .map((e) => e.trimOut())
+                .where((e) => e.isNotEmpty)
+                .toList();
 
         pseudos = pseudos.isEmpty ? null : pseudos;
 
         if (pseudos != null) {
-          data['pseudos'] =
-          pseudos.length == 1 ? [pseudos[0], " "] : pseudos;
+          data['pseudos'] = pseudos.length == 1 ? [pseudos[0], " "] : pseudos;
         }
 
-        if (number != null && int.tryParse(number!) != null) {
-          data['phone'] = int.tryParse(phoneNumber).toString();
+        if (number1 != null && int.tryParse(number1!) != null) {
+          data['phone_1'] = int.tryParse(phoneNumber1).toString();
+        }
+
+        if (number2 != null && int.tryParse(number2!) != null) {
+          data['phone_2'] = int.tryParse(phoneNumber2).toString();
         }
 
         if (birthDate != null) {
-          data['birthDate'] = birthDate?.toIso8601String();
+          data['birthDate'] = "${birthDate!.toIso8601String()}Z";
+        }
+
+        if (locationController.text.isNotEmpty) {
+          data['lastKnownLocation'] = locationController.text;
+        }
+
+        if (linkedinController.text.isNotEmpty) {
+          data['linkedin'] = linkedinController.text;
+        }
+
+        if (twitterController.text.isNotEmpty) {
+          data['twitter'] = twitterController.text;
+        }
+
+        if (instagramController.text.isNotEmpty) {
+          data['instagram'] = instagramController.text;
+        }
+
+        if (youtubeController.text.isNotEmpty) {
+          data['youtube'] = youtubeController.text;
+        }
+
+        if (facebook1Controller.text.isNotEmpty) {
+          data['facebook_1'] = facebook1Controller.text;
+        }
+
+        if (facebook2Controller.text.isNotEmpty) {
+          data['facebook_2'] = facebook2Controller.text;
+        }
+
+        if (websiteController.text.isNotEmpty) {
+          data['website'] = websiteController.text;
+        }
+
+        if (email1Controller.text.isNotEmpty) {
+          data['email_1'] = email1Controller.text;
+        }
+
+        if (email2Controller.text.isNotEmpty) {
+          data['email_2'] = email2Controller.text;
         }
 
         try {
@@ -582,8 +710,28 @@ class _CreateEntityWidgetState extends State<CreateEntityWidget> {
     setState(() {
       nameController.clear();
       descriptionController.clear();
+      pseudosController.clear();
+      locationController.clear();
+      linkedinController.clear();
+      twitterController.clear();
+      instagramController.clear();
+      youtubeController.clear();
+      facebook1Controller.clear();
+      facebook2Controller.clear();
+      websiteController.clear();
+      email1Controller.clear();
+      email2Controller.clear();
       categoryController.clear();
+      genderController.clear();
+      religionController.clear();
+      regionController.clear();
+      phoneNumber1 = '';
+      phoneNumber2 = '';
+      number1 = null;
+      number2 = null;
+      birthDate = null;
       image = null;
+      noImageError = false;
     });
   }
 }

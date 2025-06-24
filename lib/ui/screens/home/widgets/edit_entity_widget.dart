@@ -11,6 +11,7 @@ import 'package:frontend/utils/extensions/build_context.dart';
 import 'package:frontend/utils/extensions/string.dart';
 import 'package:frontend/utils/helpers.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl_phone_field/phone_number.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../models/entity.dart';
@@ -28,19 +29,34 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
   late TextEditingController nameController;
   late TextEditingController descriptionController;
   late HomeDropDownController categoryController;
+  late HomeDropDownController genderController;
+  late HomeDropDownController religionController;
+  late HomeDropDownController regionController;
   late TextEditingController pseudosController;
-  String? completePhoneNumber;
-  String? number;
+  late TextEditingController locationController;
+  late TextEditingController linkedinController;
+  late TextEditingController twitterController;
+  late TextEditingController instagramController;
+  late TextEditingController youtubeController;
+  late TextEditingController facebook1Controller;
+  late TextEditingController facebook2Controller;
+  late TextEditingController websiteController;
+  late TextEditingController email1Controller;
+  late TextEditingController email2Controller;
+  
+  String phoneNumber1 = '';
+  String? number1;
+  String phoneNumber2 = '';
+  String? number2;
+  
   DateTime? birthDate;
-
   bool birthFailedValidation = false;
-
   bool noImageError = false;
   String? initialImageUrl;
 
   final ImagePicker picker = ImagePicker();
   XFile? image;
-  bool creating = false;
+  bool editing = false;
 
   @override
   void initState() {
@@ -48,7 +64,20 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
     nameController = TextEditingController();
     descriptionController = TextEditingController();
     categoryController = HomeDropDownController(value: null);
+    genderController = HomeDropDownController(value: null);
+    religionController = HomeDropDownController(value: null);
+    regionController = HomeDropDownController(value: null);
     pseudosController = TextEditingController();
+    locationController = TextEditingController();
+    linkedinController = TextEditingController();
+    twitterController = TextEditingController();
+    instagramController = TextEditingController();
+    youtubeController = TextEditingController();
+    facebook1Controller = TextEditingController();
+    facebook2Controller = TextEditingController();
+    websiteController = TextEditingController();
+    email1Controller = TextEditingController();
+    email2Controller = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final entity = context.read<HomeProvider>().selectedEntity!;
@@ -57,9 +86,23 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
       nameController.text = entity.name;
       descriptionController.text = entity.description;
       categoryController.value = entity.type.name;
-      completePhoneNumber = entity.phone_1?.toString() ?? '';
+      genderController.value = entity.gender?.name;
+      religionController.value = entity.religion?.name;
+      regionController.value = entity.region?.name;
+      phoneNumber1 = entity.phone_1?.toString() ?? '';
+      phoneNumber2 = entity.phone_2?.toString() ?? '';
       pseudosController.text = entity.pseudos?.join(',') ?? '';
       birthDate = entity.birthDate;
+      locationController.text = entity.lastKnownLocation ?? '';
+      linkedinController.text = entity.linkedin ?? '';
+      twitterController.text = entity.twitter ?? '';
+      instagramController.text = entity.instagram ?? '';
+      youtubeController.text = entity.youtube ?? '';
+      facebook1Controller.text = entity.facebook_1 ?? '';
+      facebook2Controller.text = entity.facebook_2 ?? '';
+      websiteController.text = entity.website ?? '';
+      email1Controller.text = entity.email_1 ?? '';
+      email2Controller.text = entity.email_2 ?? '';
       setState(() {});
     });
   }
@@ -69,23 +112,32 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
     nameController.dispose();
     descriptionController.dispose();
     categoryController.dispose();
+    genderController.dispose();
+    religionController.dispose();
+    regionController.dispose();
     pseudosController.dispose();
-
+    locationController.dispose();
+    linkedinController.dispose();
+    twitterController.dispose();
+    instagramController.dispose();
+    youtubeController.dispose();
+    facebook1Controller.dispose();
+    facebook2Controller.dispose();
+    websiteController.dispose();
+    email1Controller.dispose();
+    email2Controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Form(
       key: formKey,
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.only(right: 16),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(right: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,84 +196,56 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
               nullPlaceholder: context.t('allCategories'),
             ),
             const SizedBox(height: 10),
+            HomeDropDown(
+              controller: genderController,
+              isExpanded: true,
+              showAllOption: true,
+              defaultValue: null,
+              items: Gender.values.map((e) => e.name).toList(),
+              borderColor: Theme.of(context).colorScheme.onPrimary,
+              nullPlaceholder: context.t('selectGender'),
+            ),
+            const SizedBox(height: 10),
+            HomeDropDown(
+              controller: religionController,
+              isExpanded: true,
+              showAllOption: true,
+              defaultValue: null,
+              items: Religion.values.map((e) => e.name).toList(),
+              borderColor: Theme.of(context).colorScheme.onPrimary,
+              nullPlaceholder: context.t('selectReligion'),
+            ),
+            const SizedBox(height: 10),
+            HomeDropDown(
+              controller: regionController,
+              isExpanded: true,
+              showAllOption: true,
+              defaultValue: null,
+              items: Region.values.map((e) => e.name).toList(),
+              borderColor: Theme.of(context).colorScheme.onPrimary,
+              nullPlaceholder: context.t('selectRegion'),
+            ),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: PhoneInputField(
-                    defaultValue: completePhoneNumber,
+                    defaultValue: phoneNumber1,
                     onChanged: (phone) {
-                        completePhoneNumber = phone.completeNumber.substring(1);
-                        number = phone.number;
+                      phoneNumber1 = phone.completeNumber.substring(1);
+                      number1 = phone.number;
                     },
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: InkWell(
-                    onTap: () async {
-                      DateTime? birthDate = await showDatePicker(
-                        context: context,
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime.now(),
-                      );
-                      if (birthDate == null) return;
-                      setState(() {
-                        this.birthDate = birthDate;
-                      });
+                  child: PhoneInputField(
+                    defaultValue: phoneNumber2,
+                    onChanged: (phone) {
+                      phoneNumber2 = phone.completeNumber.substring(1);
+                      number2 = phone.number;
                     },
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 20),
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      width: double.infinity,
-                      height: 47,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        color: Theme.of(context).colorScheme.primary,
-                        border: Border.all(
-                          color:
-                              birthFailedValidation
-                                  ? Colors.red.shade800
-                                  : Theme.of(context).colorScheme.onPrimary,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_month,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                            birthDate == null
-                                ? context.t('birthDate')
-                                : toDate(birthDate!),
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyMedium?.copyWith(
-                              color:
-                                  birthFailedValidation
-                                      ? Colors.red.shade800
-                                      : Theme.of(context).colorScheme.onPrimary,
-                            ),
-                          ),
-                          Spacer(),
-                          if (birthDate != null)
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  birthDate = null;
-                                });
-                              },
-                              icon: Icon(
-                                Icons.clear,
-                                color: Theme.of(context).colorScheme.onPrimary,
-                                size: 18,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
                   ),
                 ),
               ],
@@ -229,176 +253,400 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
             const SizedBox(height: 10),
             InkWell(
               onTap: () async {
-                if (!formKey.currentState!.validate()) return;
-
-                if (completePhoneNumber != null &&
-                    completePhoneNumber!.isNotEmpty &&
-                    !RegExp(r'^\d+$').hasMatch(completePhoneNumber!)) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.red.shade600,
-                      content: Text(
-                        context.t('invalidPhone'),
-                        style: TextStyle(color: Colors.white),
+                DateTime? birthDate = await showDatePicker(
+                  context: context,
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
+                );
+                if (birthDate == null) return;
+                setState(() {
+                  this.birthDate = birthDate;
+                });
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                width: double.infinity,
+                height: 47,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  color: Theme.of(context).colorScheme.primary,
+                  border: Border.all(
+                    color:
+                    birthFailedValidation
+                        ? Colors.red.shade800
+                        : Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_month,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      birthDate == null
+                          ? context.t('birthDate')
+                          : toDate(birthDate!),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(
+                        color:
+                        birthFailedValidation
+                            ? Colors.red.shade800
+                            : Theme.of(context).colorScheme.onPrimary,
                       ),
                     ),
-                  );
-                  return;
-                }
-
-                setState(() => creating = true);
-
-                Entity entity;
-
-                try {
-                  final selectedEntity =
-                      context.read<HomeProvider>().selectedEntity!;
-                  final Map<String, dynamic> data = {};
-
-                  if (nameController.text != selectedEntity.name) {
-                    data['name'] = nameController.text;
-                  }
-
-                  if (descriptionController.text !=
-                      selectedEntity.description) {
-                    data['description'] = descriptionController.text;
-                  }
-
-                  if (categoryController.value != selectedEntity.type.name) {
-                    data['type'] = categoryController.value;
-                  }
-
-
-                  if (image != null) {
-                    data['file'] = MultipartFile.fromBytes(
-                      await image!.readAsBytes(),
-                      filename: image!.name,
-                    );
-                  }
-
-                  if (pseudosController.text !=
-                      selectedEntity.pseudos?.join(',')) {
-                    List<String> pseudos = pseudosController.text.split(",").map((e) => e.trimOut()).where((e) => e.isNotEmpty).toList();
-                    data['pseudos'] = pseudos.length == 1 ? [pseudos[0]," "] : pseudos;
-                  }
-
-                  if (number!=null && int.tryParse(number!) != null) {
-                    data['phone'] = int.tryParse(completePhoneNumber!).toString();
-                  }
-
-                  if (birthDate != null &&
-                      birthDate != selectedEntity.birthDate) {
-                    data['birthDate'] = birthDate?.toIso8601String();
-                  }
-
-                  print("DATA: $data");
-                  final formData = FormData.fromMap(data);
-
-                  entity = await EntityApi.update(selectedEntity.id, formData);
-                } catch (e) {
-                  print(e);
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.red.shade600,
-                        content: Text(
-                          context.t('wentWrong'),
-                          style: TextStyle(color: Colors.white),
+                    Spacer(),
+                    if (birthDate != null)
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            birthDate = null;
+                          });
+                        },
+                        icon: Icon(
+                          Icons.clear,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                          size: 18,
                         ),
                       ),
-                    );
-                  }
-                  setState(() => creating = false);
-                  return;
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            HomeInputField(
+              controller: locationController,
+              label: context.t('location'),
+              prefixIcon: Icon(Icons.location_on, color: Theme.of(context).colorScheme.onPrimary, size: 20,),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: HomeInputField(
+                    controller: linkedinController,
+                    label: "Linkedin",
+                    hintText: context.t('username'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: HomeInputField(
+                    controller: twitterController,
+                    label: "X (Twitter)",
+                    hintText: context.t('username'),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: HomeInputField(
+                    controller: instagramController,
+                    label: "Instagram",
+                    hintText: "@${context.t('username')}",
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: HomeInputField(
+                    controller: youtubeController,
+                    label: "YouTube",
+                    hintText: context.t('username'),
+                  ),
+                )
+              ],
+            ),
+            const SizedBox(height: 10),
+            HomeInputField(
+              controller: facebook1Controller,
+              label: "Facebook (1)",
+              hintText: context.t('username'),
+            ),
+            const SizedBox(height: 10),
+            HomeInputField(
+              controller: facebook2Controller,
+              label: "Facebook (2)",
+              hintText: context.t('username'),
+            ),
+            const SizedBox(height: 10),
+            HomeInputField(
+              controller: websiteController,
+              label: context.t('website'),
+              hintText: 'http://example.com',
+              prefixIcon: Icon(Icons.language, color: Theme.of(context).colorScheme.onPrimary, size: 20,),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: HomeInputField(
+                    controller: email1Controller,
+                    label: "Email (1)",
+                    prefixIcon: Icon(Icons.email, color: Theme.of(context).colorScheme.onPrimary, size: 20,),
+                    hintText:'email@example.com',
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: HomeInputField(
+                    controller: email2Controller,
+                    label: "Email (2)",
+                    hintText: 'email@example.com',
+                    prefixIcon: Icon(Icons.email, color: Theme.of(context).colorScheme.onPrimary, size: 20,),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            _buildActionButtons(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: InkWell(
+            onTap: () {
+              context.read<HomeProvider>().setSelectedSideState(
+                HomeSideState.view,
+              );
+            },
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.5),
+              ),
+              child: Center(
+                child: Text(
+                  context.t('cancel'),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: InkWell(
+            onTap: () async {
+              if (!formKey.currentState!.validate()) return;
+
+              if (number1 != null && int.tryParse(number1!) == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.red.shade600,
+                    content: Text(
+                      context.t('invalidPhone'),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                );
+                return;
+              }
+
+              if (number2 != null && int.tryParse(number2!) == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.red.shade600,
+                    content: Text(
+                      context.t('invalidPhone'),
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                );
+                return;
+              }
+
+              setState(() => editing = true);
+
+              try {
+                final selectedEntity = context.read<HomeProvider>().selectedEntity!;
+                final Map<String, dynamic> data = {};
+
+                // Basic information
+                if (nameController.text != selectedEntity.name) {
+                  data['name'] = nameController.text;
                 }
 
+                if (descriptionController.text != selectedEntity.description) {
+                  data['description'] = descriptionController.text;
+                }
+
+                if (categoryController.value != selectedEntity.type.name) {
+                  data['type'] = categoryController.value;
+                }
+
+                // Gender, Religion, Region
+                if (genderController.value != selectedEntity.gender?.name) {
+                  data['gender'] = genderController.value;
+                }
+
+                if (religionController.value != selectedEntity.religion?.name) {
+                  data['religion'] = religionController.value;
+                }
+
+                if (regionController.value != selectedEntity.region?.name) {
+                  data['region'] = regionController.value;
+                }
+
+                // Image
+                if (image != null) {
+                  data['file'] = MultipartFile.fromBytes(
+                    await image!.readAsBytes(),
+                    filename: image!.name,
+                  );
+                }
+
+                // Pseudos
+                if (pseudosController.text != selectedEntity.pseudos?.join(',')) {
+                  List<String> pseudos = pseudosController.text
+                      .split(",")
+                      .map((e) => e.trimOut())
+                      .where((e) => e.isNotEmpty)
+                      .toList();
+                  data['pseudos'] = pseudos.length == 1 ? [pseudos[0], " "] : pseudos;
+                }
+
+                // Phone numbers
+                if (number1 != null && int.tryParse(number1!) != null) {
+                  String newPhone1 = int.tryParse(phoneNumber1).toString();
+                  if (newPhone1 != selectedEntity.phone_1?.toString()) {
+                    data['phone_1'] = newPhone1;
+                  }
+                }
+
+                if (number2 != null && int.tryParse(number2!) != null) {
+                  String newPhone2 = int.tryParse(phoneNumber2).toString();
+                  if (newPhone2 != selectedEntity.phone_2?.toString()) {
+                    data['phone_2'] = newPhone2;
+                  }
+                }
+
+                // Birth date
+                if (birthDate != null && birthDate != selectedEntity.birthDate) {
+                  data['birthDate'] = "${birthDate!.toIso8601String()}Z";
+                }
+
+                // Location
+                if (locationController.text != (selectedEntity.lastKnownLocation ?? '')) {
+                  data['lastKnownLocation'] = locationController.text;
+                }
+
+                // Social media
+                if (linkedinController.text != (selectedEntity.linkedin ?? '')) {
+                  data['linkedin'] = linkedinController.text;
+                }
+
+                if (twitterController.text != (selectedEntity.twitter ?? '')) {
+                  data['twitter'] = twitterController.text;
+                }
+
+                if (instagramController.text != (selectedEntity.instagram ?? '')) {
+                  data['instagram'] = instagramController.text;
+                }
+
+                if (youtubeController.text != (selectedEntity.youtube ?? '')) {
+                  data['youtube'] = youtubeController.text;
+                }
+
+                if (facebook1Controller.text != (selectedEntity.facebook_1 ?? '')) {
+                  data['facebook_1'] = facebook1Controller.text;
+                }
+
+                if (facebook2Controller.text != (selectedEntity.facebook_2 ?? '')) {
+                  data['facebook_2'] = facebook2Controller.text;
+                }
+
+                // Website and emails
+                if (websiteController.text != (selectedEntity.website ?? '')) {
+                  data['website'] = websiteController.text;
+                }
+
+                if (email1Controller.text != (selectedEntity.email_1 ?? '')) {
+                  data['email_1'] = email1Controller.text;
+                }
+
+                if (email2Controller.text != (selectedEntity.email_2 ?? '')) {
+                  data['email_2'] = email2Controller.text;
+                }
+
+                final formData = FormData.fromMap(data);
+                print(data.toString());
+
+                final entity = await EntityApi.update(selectedEntity.id, formData);
                 if (context.mounted) {
                   context.read<HomeProvider>().updateEntity(entity);
                   context.read<HomeProvider>().setShowSideBox(false);
                 }
-
-                setState(() => creating = false);
-              },
-              child: Row(
-                children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        context.read<HomeProvider>().setSelectedSideState(
-                          HomeSideState.view,
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 7),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          color:
-                              Theme.of(
-                                context,
-                              ).colorScheme.onSecondaryFixedVariant,
-                        ),
-                        child: Center(
-                          child: Text(
-                            context.t('cancel'),
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
+              } catch (e) {
+                print(e);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      backgroundColor: Colors.red.shade600,
+                      content: Text(
+                        context.t('wentWrong'),
+                        style: TextStyle(color: Colors.white),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 7),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(4),
-                        color:
-                            Theme.of(
-                              context,
-                            ).colorScheme.onSecondaryFixedVariant,
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (creating) ...[
-                              SizedBox(
-                                width: 13,
-                                height: 13,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 4,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                            ],
-                            Text(
-                              context.t('edit'),
-                              style: Theme.of(
-                                context,
-                              ).textTheme.bodyLarge?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                  );
+                }
+              } finally {
+                if (context.mounted) {
+                  setState(() => editing = false);
+                }
+              }
+            },
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: Theme.of(context).colorScheme.onSecondaryFixedVariant,
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if (editing) ...[
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
+                      const SizedBox(width: 8),
+                    ],
+                    Text(
+                      context.t('edit'),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -410,12 +658,13 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
         height: MediaQuery.of(context).size.height * 0.20709,
         decoration: BoxDecoration(
           color: Colors.grey,
+          borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).colorScheme.inversePrimary,
-              blurRadius: 0.5,
-              spreadRadius: 1,
-              offset: Offset(0, 0),
+              color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.3),
+              blurRadius: 8,
+              spreadRadius: 2,
+              offset: const Offset(0, 2),
             ),
           ],
           border: noImageError ? Border.all(color: Colors.red.shade800) : null,
@@ -475,14 +724,14 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
                         onPressed: _pickImage,
                         style: IconButton.styleFrom(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(3),
+                            borderRadius: BorderRadius.circular(6),
                           ),
                           backgroundColor:
                               Theme.of(context).colorScheme.secondary,
                           foregroundColor:
                               Theme.of(context).colorScheme.onPrimary,
                         ),
-                        icon: Icon(Icons.edit),
+                        icon: Icon(Icons.edit, size: 18),
                       ),
                     ),
                   ],
@@ -502,3 +751,4 @@ class _EditEntityWidgetState extends State<EditEntityWidget> {
     }
   }
 }
+
