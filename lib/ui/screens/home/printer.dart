@@ -1,5 +1,6 @@
 import 'package:frontend/models/entity.dart';
 import 'package:frontend/res/translations.dart';
+import 'package:frontend/utils/extensions/string.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:dio/dio.dart';
@@ -13,7 +14,6 @@ extension ContextExtension on pw.Context {
 }
 
 Future<pw.Document> printEntity(Entity entity) async {
-
   Uint8List imageBytes = Uint8List(0);
   if (entity.image != null) {
     try {
@@ -50,16 +50,17 @@ Future<pw.Document> printEntity(Entity entity) async {
                     color: PdfColors.grey300,
                     borderRadius: pw.BorderRadius.circular(8),
                   ),
-                  child: imageBytes.isNotEmpty
-                      ? pw.Image(
-                          pw.MemoryImage(imageBytes),
-                          fit: pw.BoxFit.cover,
-                        )
-                      : pw.Icon(
-                          pw.IconData(0xe3f3), // Icons.person
-                          size: 40,
-                          color: PdfColors.grey600,
-                        ),
+                  child:
+                      imageBytes.isNotEmpty
+                          ? pw.Image(
+                            pw.MemoryImage(imageBytes),
+                            fit: pw.BoxFit.cover,
+                          )
+                          : pw.Icon(
+                            pw.IconData(0xe3f3), // Icons.person
+                            size: 40,
+                            color: PdfColors.grey600,
+                          ),
                 ),
                 pw.SizedBox(width: 20),
                 pw.Expanded(
@@ -99,25 +100,74 @@ Future<pw.Document> printEntity(Entity entity) async {
             ),
             pw.SizedBox(height: 30),
 
+            // Date and Time Section
+            pw.Container(
+              padding: pw.EdgeInsets.all(12),
+              decoration: pw.BoxDecoration(
+                color: PdfColors.grey200,
+                borderRadius: pw.BorderRadius.circular(6),
+              ),
+              child: pw.Row(
+                children: [
+                  pw.Icon(
+                    pw.IconData(0xe878), // Icons.schedule
+                    size: 16,
+                    color: PdfColors.grey700,
+                  ),
+                  pw.SizedBox(width: 8),
+                  pw.Text(
+                    '${context.t('generatedOn')} ${_formatDateTime(DateTime.now(), context)}',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      color: PdfColors.grey700,
+                      fontWeight: pw.FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            pw.SizedBox(height: 20),
+
             // Basic Information Section
             _buildSection(
               title: context.t('basicInformation'),
               children: [
-                _buildInfoRow('Name', entity.name),
-                _buildInfoRow('Category', context.t(entity.type.name)),
+                _buildInfoRow(context.t('name'), entity.name),
+                _buildInfoRow(
+                  context.t('category'),
+                  context.t(entity.type.name),
+                ),
                 if (entity.gender != null)
-                  _buildInfoRow('Gender', context.t(entity.gender!.name)),
+                  _buildInfoRow(
+                    context.t('gender'),
+                    context.t(entity.gender!.name),
+                  ),
                 if (entity.religion != null)
-                  _buildInfoRow('Religion', context.t(entity.religion!.name)),
+                  _buildInfoRow(
+                    context.t('religion'),
+                    context.t(entity.religion!.name),
+                  ),
                 if (entity.region != null)
-                  _buildInfoRow('Region', context.t(entity.region!.name)),
+                  _buildInfoRow(
+                    context.t('region'),
+                    context.t(entity.region!.name),
+                  ),
                 if (entity.pseudos?.isNotEmpty == true)
-                  _buildInfoRow('Pseudos', entity.pseudos!.where((e) => e.isNotEmpty).join(', ')),
+                  _buildInfoRow(
+                    context.t('pseudos'),
+                    entity.pseudos!.where((e) => e.isNotEmpty).join(', '),
+                  ),
                 if (entity.birthDate != null)
-                  _buildInfoRow('Birth Date', entity.birthDate!.toIso8601String().substring(0, 10)),
+                  _buildInfoRow(
+                    context.t('birthDate'),
+                    entity.birthDate!.toIso8601String().substring(0, 10),
+                  ),
                 if (entity.lastKnownLocation?.isNotEmpty == true)
-                  _buildInfoRow('Location', entity.lastKnownLocation!),
-                _buildInfoRow('Description', entity.description),
+                  _buildInfoRow(
+                    context.t('lastKnownLocation'),
+                    entity.lastKnownLocation!,
+                  ),
+                _buildInfoRow(context.t('description'), entity.description),
               ],
             ),
             pw.SizedBox(height: 20),
@@ -134,7 +184,7 @@ Future<pw.Document> printEntity(Entity entity) async {
                 if (entity.email_2?.isNotEmpty == true)
                   _buildInfoRow('Email (2)', entity.email_2!),
                 if (entity.website?.isNotEmpty == true)
-                  _buildInfoRow('Website', entity.website!),
+                  _buildInfoRow(context.t('website'), entity.website!),
               ],
             ),
             pw.SizedBox(height: 20),
@@ -163,7 +213,10 @@ Future<pw.Document> printEntity(Entity entity) async {
             _buildSection(
               title: context.t('statistics'),
               children: [
-                _buildInfoRow(context.t('uploads'), entity.uploadsCount.toString()),
+                _buildInfoRow(
+                  context.t('uploads'),
+                  entity.uploadsCount.toString(),
+                ),
               ],
             ),
           ],
@@ -220,13 +273,37 @@ pw.Widget _buildInfoRow(String label, String value) {
         pw.Expanded(
           child: pw.Text(
             value,
-            style: pw.TextStyle(
-              fontSize: 12,
-              color: PdfColors.black,
-            ),
+            style: pw.TextStyle(fontSize: 12, color: PdfColors.black),
           ),
         ),
       ],
     ),
   );
+}
+
+String _formatDateTime(DateTime dateTime, pw.Context context) {
+  // Format: "January 15, 2024 at 14:30:25"
+  final months = [
+    'january',
+    'february',
+    'march',
+    'april',
+    'may',
+    'june',
+    'july',
+    'august',
+    'september',
+    'october',
+    'november',
+    'december',
+  ];
+
+  final month = months[dateTime.month - 1];
+  final day = dateTime.day;
+  final year = dateTime.year;
+  final hour = dateTime.hour.toString().padLeft(2, '0');
+  final minute = dateTime.minute.toString().padLeft(2, '0');
+  final second = dateTime.second.toString().padLeft(2, '0');
+
+  return '${context.t(month).capitalize()} $day, $year at $hour:$minute:$second';
 }
