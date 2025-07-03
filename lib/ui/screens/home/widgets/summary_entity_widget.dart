@@ -32,11 +32,9 @@ class _SummaryEntityWidgetState extends State<SummaryEntityWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with image and basic info
             _buildHeader(selectedEntity!),
             const SizedBox(height: 20),
 
-            // Basic Information Section
             _buildSection(
               title: context.t('basicInformation'),
               icon: Icons.info_outline,
@@ -63,7 +61,7 @@ class _SummaryEntityWidgetState extends State<SummaryEntityWidget> {
                   ),
                 if (selectedEntity.pseudos?.isNotEmpty == true)
                   _buildInfoRow(
-                    'Pseudos',
+                    context.t('pseudos'),
                     selectedEntity.pseudos!
                         .where((e) => e.isNotEmpty)
                         .join(', '),

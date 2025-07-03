@@ -209,7 +209,6 @@ Future<pw.Document> printEntity(Entity entity) async {
             ),
             pw.SizedBox(height: 20),
 
-            // Statistics Section
             _buildSection(
               title: context.t('statistics'),
               children: [
@@ -282,7 +281,6 @@ pw.Widget _buildInfoRow(String label, String value) {
 }
 
 String _formatDateTime(DateTime dateTime, pw.Context context) {
-  // Format: "January 15, 2024 at 14:30:25"
   final months = [
     'january',
     'february',
@@ -305,5 +303,5 @@ String _formatDateTime(DateTime dateTime, pw.Context context) {
   final minute = dateTime.minute.toString().padLeft(2, '0');
   final second = dateTime.second.toString().padLeft(2, '0');
 
-  return '${context.t(month).capitalize()} $day, $year at $hour:$minute:$second';
+  return '${context.t(month).capitalize()} $day, $year - $hour:$minute:$second';
 }

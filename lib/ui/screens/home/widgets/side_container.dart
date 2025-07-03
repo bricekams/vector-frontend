@@ -41,26 +41,32 @@ class HomeSideContainer extends StatelessWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        onPressed: () async {
-                          final doc = await printEntity(context.read<HomeProvider>().selectedEntity!);
-                          if (!context.mounted) return;
-                          await Printing.layoutPdf(
-                            onLayout: (PdfPageFormat format) async => doc.save(),
-                          );
-                        },
-                        style: IconButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
+                      if (context.read<HomeProvider>().selectedSideState ==
+                          HomeSideState.view) ...[
+                        IconButton(
+                          onPressed: () async {
+                            final doc = await printEntity(
+                              context.read<HomeProvider>().selectedEntity!,
+                            );
+                            if (!context.mounted) return;
+                            await Printing.layoutPdf(
+                              onLayout:
+                                  (PdfPageFormat format) async => doc.save(),
+                            );
+                          },
+                          style: IconButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            backgroundColor:
+                                Theme.of(context).colorScheme.onPrimary,
+                            foregroundColor:
+                                Theme.of(context).colorScheme.primary,
                           ),
-                          backgroundColor:
-                              Theme.of(context).colorScheme.onPrimary,
-                          foregroundColor:
-                              Theme.of(context).colorScheme.primary,
+                          icon: Icon(Icons.print, size: 30),
                         ),
-                        icon: Icon(Icons.print, size: 30),
-                      ),
-                      const SizedBox(width: 10),
+                        const SizedBox(width: 10),
+                      ],
                       Text(
                         title,
                         style: Theme.of(
